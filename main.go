@@ -62,7 +62,7 @@ func filterMovie(input string, history *tui.Box) {
 			tui.NewLabel(time.Now().Format("15:04")),
 			tui.NewPadder(1, 0, tui.NewLabel(fmt.Sprintf("querying '%s' result size=%d", input, len(res)))),
 			tui.NewSpacer(),
-			tui.NewPadder(1, 0, tui.NewLabel(fmt.Sprintf("\n%s\n", res))),
+			tui.NewPadder(1, 0, tui.NewLabel(fmt.Sprintf("\n%s\n", strings.Join(res,"\n")))),
 		))
 	}
 }
@@ -74,7 +74,6 @@ func removeMovie(input string, history *tui.Box) {
 		history.Append(tui.NewHBox(tui.NewPadder(0, 0, tui.NewLabel("Nothing found during search"))))
 	} else if input == "" {
 		history.Append(tui.NewHBox(tui.NewPadder(0, 0, tui.NewLabel("invalid input for removing movie, type fullcmd for help"))))
-		return
 	} else if err != nil {
 		history.Append(tui.NewHBox(tui.NewPadder(0, 0, tui.NewLabel("Errr during search: "+err.Error()))))
 	} else {
@@ -184,7 +183,7 @@ func main() {
 			mode = e.Text()
 			history.Append(tui.NewHBox(tui.NewPadder(0, 0, tui.NewLabel("switching to mode: "+mode))))
 		} else if e.Text() == "fullcmd" {
-			history.Append(tui.NewHBox(tui.NewLabel("command list:\nsearch: type regex to search in names/tags\nadd: enter name,rating,tag/tags,...\nremove: enter name of movie to remove, or regex matching any other field\nscroll: type scroll, then use arrow keys to movie view up or down")))
+			history.Append(tui.NewHBox(tui.NewLabel("command list:\n\nsearch: type regex to search in names/tags\n\nadd: enter name,rating,tag/tags,...\n\nremove: enter name of movie to remove, or regex matching any other field\n\nscroll: type scroll, then use arrow keys to movie view up or down")))
 		} else {
 			switch mode {
 			case "add":
@@ -207,8 +206,8 @@ func main() {
 	}
 
 	ui.SetKeybinding("Esc", func() { saveData(history); ui.Quit() })
-	ui.SetKeybinding("Up", func() { historyScroll.Scroll(0, -1) }) //both of these are for scroll mode
-	ui.SetKeybinding("Down", func() { historyScroll.Scroll(0, 1) })
+	ui.SetKeybinding("Up", func() { historyScroll.Scroll(0, -5) }) //both of these are for scroll mode
+	ui.SetKeybinding("Down", func() { historyScroll.Scroll(0, 5) })
 
 	if err := ui.Run(); err != nil {
 		log.Fatal(err)
