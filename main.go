@@ -9,6 +9,7 @@ import (
 	"regexp"
 	"strings"
 	"time"
+	"sort"
 )
 
 //This program was made just because I watch an immense amount of movies,
@@ -24,7 +25,7 @@ var CurrentList string         //current in memory movie list
 
 type searchFlags struct {
 	alphabetical bool //sort alphabetically by movie name
-	rating       int //sort by rating, 1=asc, -1=desc, 0=none
+	quickscroll  bool
 }
 
 var currFlags searchFlags
@@ -55,7 +56,7 @@ func addMovie(input string, history *tui.Box) {
 }
 
 //filters movie by regular expression (or just movie name/tag), returns entire roow for match
-func filterMovie(input string, history *tui.Box) {
+func filterMovie(input string, history *tui.Box,f searchFlags) {
 	matched, err := regexp.MatchString(input+`.*\n`, CurrentList)
 	if !matched {
 		history.Append(tui.NewHBox(tui.NewPadder(0, 0, tui.NewLabel("Nothing found during filter"))))
@@ -64,6 +65,11 @@ func filterMovie(input string, history *tui.Box) {
 	} else {
 		rep := regexp.MustCompile(".*" + input + `.*\n`)
 		res := rep.FindAllString(CurrentList, -1)
+
+		if f.alphabetical{
+			sort.StringSlice(res).Sort()
+		}
+
 		//add to history command window
 		history.Append(tui.NewHBox(
 			tui.NewLabel(time.Now().Format("15:04")),
@@ -133,9 +139,13 @@ func readData() {
 }
 
 func main() {
+	f := searchFlags{
+		alphabetical: false,
+		quickscroll:  false,
+	}
 	//setup initial side labels
 	sidebar := tui.NewVBox(
-		tui.NewLabel("Type:\nsearch\nadd\nremove\nor scroll\nto switch mode"),
+		tui.NewLabel("Type:\nsearch\nadd\nor remove\nto switch mode\n\nUse right arrow\nto toggle scroll"),
 		tui.NewLabel(""),
 		tui.NewLabel("In Search\nspecify:\nregex to find\nname/tag/tags..."),
 		tui.NewLabel(""),
@@ -180,22 +190,17 @@ func main() {
 	chat.SetSizePolicy(tui.Expanding, tui.Expanding)
 
 	input.OnSubmit(func(e *tui.Entry) {
-		if e.Text() == "add" || e.Text() == "search" || e.Text() == "remove" || e.Text() == "scroll" {
-			if mode == "scroll" {
-				historyScroll.SetAutoscrollToBottom(true)
-			} else if e.Text() == "scroll" {
-				historyScroll.SetAutoscrollToBottom(false)
-			}
+		if e.Text() == "add" || e.Text() == "search" || e.Text() == "remove" {
 			mode = e.Text()
 			history.Append(tui.NewHBox(tui.NewPadder(0, 0, tui.NewLabel("switching to mode: "+mode))))
 		} else if e.Text() == "fullcmd" {
-			history.Append(tui.NewHBox(tui.NewLabel("command list:\n\nsearch: type regex to search in names/tags\nuse this format for multiple items:\nex. sci fi or comedy\n(sci fi|comedy)\n\nadd: enter name,rating,tag/tags,...\n\nremove: enter name of movie to remove, or regex matching any other field\n\nscroll: type scroll, then use arrow keys to movie view up or down")))
+			history.Append(tui.NewHBox(tui.NewLabel("command list:\n\nsearch: type regex to search in names/tags\nuse this format for multiple items:\nex. sci fi or comedy\n(sci fi|comedy)\n\nadd: enter name,rating,tag/tags,...\n\nremove: enter name of movie to remove, or regex matching any other field\n\nUse right arrow for quick scroll toggle\nUse Tab key to toggle alphabetical sort\n")))
 		} else {
 			switch mode {
 			case "add":
 				addMovie(e.Text(), history)
 			case "search":
-				filterMovie(e.Text(), history)
+				filterMovie(e.Text(), history,f)
 			case "remove":
 				removeMovie(e.Text(), history)
 			}
@@ -214,6 +219,8 @@ func main() {
 	ui.SetKeybinding("Esc", func() { saveData(history); ui.Quit() })
 	ui.SetKeybinding("Up", func() { historyScroll.Scroll(0, -5) }) //both of these are for scroll mode
 	ui.SetKeybinding("Down", func() { historyScroll.Scroll(0, 5) })
+	ui.SetKeybinding("Right", func() { historyScroll.SetAutoscrollToBottom(f.quickscroll); f.quickscroll = !f.quickscroll }) //for quick scroll hotkey
+	ui.SetKeybinding("Tab", func() { history.Append(tui.NewHBox(tui.NewPadder(0, 0, tui.NewLabel("sorting alphabetically"))));f.alphabetical=!f.alphabetical; })
 
 	if err := ui.Run(); err != nil {
 		log.Fatal(err)
