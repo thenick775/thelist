@@ -6,6 +6,9 @@ my favorites in my head.
 
 This is a quick and dirty movie listing utility, that makes use of tui-go for formatting the window.
 
+The search utilizes regular expressions, which is the primary way I wanted to be able to filter and search
+by multiple tags.
+
 Future upgrades:
 
 -Store file in compressed/binary format
