@@ -13,3 +13,5 @@ Future upgrades:
 -Pretty print and color output
 
 -Minimize memory consumption when list is very large
+
+![](demo.gif)
