@@ -22,6 +22,13 @@ var mode = "add"               //default mode upon start is add
 var fname = "themovielist.csv" //file to store movielist in, in the future this may not be human readable
 var CurrentList string         //current in memory movie list
 
+type searchFlags struct {
+	alphabetical bool //sort alphabetically by movie name
+	rating       int //sort by rating, 1=asc, -1=desc, 0=none
+}
+
+var currFlags searchFlags
+
 //adds a movie to the CurrentList, to be saved on exit
 //format: name, rating, tags, descrip... (must have name, and rating as number)
 func addMovie(input string, history *tui.Box) {
@@ -62,7 +69,7 @@ func filterMovie(input string, history *tui.Box) {
 			tui.NewLabel(time.Now().Format("15:04")),
 			tui.NewPadder(1, 0, tui.NewLabel(fmt.Sprintf("querying '%s' result size=%d", input, len(res)))),
 			tui.NewSpacer(),
-			tui.NewPadder(1, 0, tui.NewLabel(fmt.Sprintf("\n%s\n", strings.Join(res,"\n")))),
+			tui.NewPadder(1, 0, tui.NewLabel(fmt.Sprintf("\n%s\n", strings.Join(res, "\n")))),
 		))
 	}
 }
@@ -131,7 +138,6 @@ func main() {
 		tui.NewLabel("Type:\nsearch\nadd\nremove\nor scroll\nto switch mode"),
 		tui.NewLabel(""),
 		tui.NewLabel("In Search\nspecify:\nregex to find\nname/tag/tags..."),
-		//tui.NewLabel("Use cmd:\nswitch list->...\nto switch lists"),
 		tui.NewLabel(""),
 		tui.NewLabel("Type:\nfullcmd\nto list all\ncommands"),
 		tui.NewLabel(""),
@@ -183,7 +189,7 @@ func main() {
 			mode = e.Text()
 			history.Append(tui.NewHBox(tui.NewPadder(0, 0, tui.NewLabel("switching to mode: "+mode))))
 		} else if e.Text() == "fullcmd" {
-			history.Append(tui.NewHBox(tui.NewLabel("command list:\n\nsearch: type regex to search in names/tags\n\nadd: enter name,rating,tag/tags,...\n\nremove: enter name of movie to remove, or regex matching any other field\n\nscroll: type scroll, then use arrow keys to movie view up or down")))
+			history.Append(tui.NewHBox(tui.NewLabel("command list:\n\nsearch: type regex to search in names/tags\nuse this format for multiple items:\nex. sci fi or comedy\n(sci fi|comedy)\n\nadd: enter name,rating,tag/tags,...\n\nremove: enter name of movie to remove, or regex matching any other field\n\nscroll: type scroll, then use arrow keys to movie view up or down")))
 		} else {
 			switch mode {
 			case "add":
