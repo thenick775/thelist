@@ -28,8 +28,6 @@ type searchFlags struct {
 	quickscroll  bool
 }
 
-var currFlags searchFlags
-
 //adds a movie to the CurrentList, to be saved on exit
 //format: name, rating, tags, descrip... (must have name, and rating as number)
 func addMovie(input string, history *tui.Box) {
@@ -220,7 +218,7 @@ func main() {
 	ui.SetKeybinding("Up", func() { historyScroll.Scroll(0, -5) }) //both of these are for scroll mode
 	ui.SetKeybinding("Down", func() { historyScroll.Scroll(0, 5) })
 	ui.SetKeybinding("Right", func() { historyScroll.SetAutoscrollToBottom(f.quickscroll); f.quickscroll = !f.quickscroll }) //for quick scroll hotkey
-	ui.SetKeybinding("Tab", func() { history.Append(tui.NewHBox(tui.NewPadder(0, 0, tui.NewLabel("sorting alphabetically"))));f.alphabetical=!f.alphabetical; })
+	ui.SetKeybinding("Tab", func() { history.Append(tui.NewHBox(tui.NewPadder(0, 0, tui.NewLabel(fmt.Sprintf("\n%s,%t\n", "toggling alphabetical sort",!f.alphabetical)))));f.alphabetical=!f.alphabetical; })
 
 	if err := ui.Run(); err != nil {
 		log.Fatal(err)
