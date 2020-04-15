@@ -57,7 +57,7 @@ func addMovie(input string, history *tui.Box) {
 func filterMovie(input string, history *tui.Box,f searchFlags) {
 	matched, err := regexp.MatchString(input+`.*\n`, CurrentList)
 	if !matched {
-		history.Append(tui.NewHBox(tui.NewPadder(0, 0, tui.NewLabel("Nothing found during filter"))))
+		history.Append(tui.NewHBox(tui.NewPadder(0, 0, tui.NewLabel(time.Now().Format("15:04")+" querying '"+input+"'\nNothing found during filter"))))
 	} else if err != nil {
 		history.Append(tui.NewHBox(tui.NewPadder(0, 0, tui.NewLabel("Errr during filter: "+err.Error()))))
 	} else {
@@ -145,7 +145,7 @@ func main() {
 	sidebar := tui.NewVBox(
 		tui.NewLabel("Type:\nsearch\nadd\nor remove\nto switch mode\n\nUse right arrow\nto toggle scroll"),
 		tui.NewLabel(""),
-		tui.NewLabel("In Search\nspecify:\nregex to find\nname/tag/tags..."),
+		tui.NewLabel("In Search\nspecify:\nregex to find\nname/tag/tags...\nuse semicolon to\ndelimit multiple\nstatements"),
 		tui.NewLabel(""),
 		tui.NewLabel("Type:\nfullcmd\nto list all\ncommands"),
 		tui.NewLabel(""),
@@ -188,20 +188,23 @@ func main() {
 	chat.SetSizePolicy(tui.Expanding, tui.Expanding)
 
 	input.OnSubmit(func(e *tui.Entry) {
-		if e.Text() == "add" || e.Text() == "search" || e.Text() == "remove" {
-			mode = e.Text()
+		inputtxt:=strings.Split(e.Text(),";")
+		for _,x:= range inputtxt{
+		if x == "add" || x == "search" || x == "remove" {
+			mode = x
 			history.Append(tui.NewHBox(tui.NewPadder(0, 0, tui.NewLabel("switching to mode: "+mode))))
-		} else if e.Text() == "fullcmd" {
+		} else if x == "fullcmd" {
 			history.Append(tui.NewHBox(tui.NewLabel("command list:\n\nsearch: type regex to search in names/tags\nuse this format for multiple items:\nex. sci fi or comedy\n(sci fi|comedy)\n\nadd: enter name,rating,tag/tags,...\n\nremove: enter name of movie to remove, or regex matching any other field\n\nUse right arrow for quick scroll toggle\nUse Tab key to toggle alphabetical sort\n")))
 		} else {
 			switch mode {
 			case "add":
-				addMovie(e.Text(), history)
+				addMovie(x, history)
 			case "search":
-				filterMovie(e.Text(), history,f)
+				filterMovie(x, history,f)
 			case "remove":
-				removeMovie(e.Text(), history)
+				removeMovie(x, history)
 			}
+		}
 		}
 
 		input.SetText("")
