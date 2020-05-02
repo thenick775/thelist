@@ -307,7 +307,7 @@ func main() {
 	ui.SetKeybinding("Up", func() {
 		if f.quickscroll == true {
 			historyScroll.Scroll(0, -5)
-		} else if tmpchloc-1 >= 0 && chstore[tmpchloc-1] != "" {
+		} else if tmpchloc-1 >= 0 && tmpchloc-1 <= currentchloc%len(chstore)-1 {
 			input.SetText(chstore[tmpchloc-1])
 			tmpchloc = tmpchloc - 1
 		}
@@ -315,7 +315,7 @@ func main() {
 	ui.SetKeybinding("Down", func() {
 		if f.quickscroll == true {
 			historyScroll.Scroll(0, 5)
-		} else if tmpchloc+1 < len(chstore) && chstore[tmpchloc+1] != "" {
+		} else if tmpchloc+1 < len(chstore) && tmpchloc+1 <= currentchloc%len(chstore)-1 {
 			input.SetText(chstore[tmpchloc+1])
 			tmpchloc = tmpchloc + 1
 		} else if tmpchloc==currentchloc%len(chstore)-1{
