@@ -123,9 +123,7 @@ func switchList(input string, history *tui.Box, list int) int {
 		queryerr := tui.NewLabel("Invalid input for list to switch to")
 		queryerr.SetStyleName("err")
 		history.Append(tui.NewHBox(tui.NewPadder(0, 0, queryerr)))
-		return list
-	}
-	if newind >= 0 && newind < len(CurrentList)-1 {
+	} else if newind >= 0 && newind < len(CurrentList)-1 {
 		queryres := tui.NewLabel(fmt.Sprintf("Switched to list at index %d, '%s'", newind, names[newind]))
 		queryres.SetStyleName("res")
 		history.Append(tui.NewHBox(tui.NewPadder(0, 0, queryres)))
@@ -134,8 +132,8 @@ func switchList(input string, history *tui.Box, list int) int {
 		queryerr := tui.NewLabel("invalid switch index number")
 		queryerr.SetStyleName("err")
 		history.Append(tui.NewHBox(tui.NewPadder(0, 0, queryerr)))
-		return list
 	}
+	return list
 }
 
 //saves data on program exit
