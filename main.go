@@ -19,7 +19,6 @@ import (
 //This was made quick and dirty, as I just wanted an easy way for me to store all
 //this information. Any recommendations are welcome.
 
-var mode = "add"               //default mode upon start is add
 var fname = "themovielist.csv" //file to store list in
 var CurrentList []string       //current in memory list
 var names []string             //names of lists in CurrentList
@@ -195,6 +194,9 @@ func main() {
 		alphabetical: false,
 		quickscroll:  false,
 	}
+	var chstore [50]string
+	currentchloc,tmpchloc:=0,0
+	mode := "add"  //default mode upon start is add
 
 	t := tui.NewTheme()
 	normal := tui.Style{Bg: tui.ColorWhite, Fg: tui.ColorBlack}
@@ -286,7 +288,9 @@ func main() {
 				}
 			}
 		}
-
+		chstore[(currentchloc)%len(chstore)]=e.Text()
+		currentchloc=currentchloc+1
+		tmpchloc=currentchloc
 		input.SetText("")
 	})
 
@@ -302,10 +306,23 @@ func main() {
 	}
 
 	ui.SetTheme(t)
-
 	ui.SetKeybinding("Esc", func() { saveData(history); ui.Quit() })
-	ui.SetKeybinding("Up", func() { historyScroll.Scroll(0, -5) }) //both of these are for scroll mode
-	ui.SetKeybinding("Down", func() { historyScroll.Scroll(0, 5) })
+	ui.SetKeybinding("Up", func() { 
+		if f.quickscroll==true{
+			historyScroll.Scroll(0, -5) 
+		} else if tmpchloc-1>=0 && chstore[tmpchloc-1]!=""{
+			input.SetText(chstore[tmpchloc-1])
+			tmpchloc=tmpchloc-1
+		}
+	}) //both of these are for scroll mode
+	ui.SetKeybinding("Down", func() { 
+		if f.quickscroll==true{
+			historyScroll.Scroll(0, 5) 
+		} else if tmpchloc+1<len(chstore) && chstore[tmpchloc+1]!=""{
+			input.SetText(chstore[tmpchloc+1])
+			tmpchloc=tmpchloc+1
+		}
+	})
 	ui.SetKeybinding("Right", func() { historyScroll.SetAutoscrollToBottom(f.quickscroll); f.quickscroll = !f.quickscroll }) //for quick scroll hotkey
 	ui.SetKeybinding("Tab", func() {
 		history.Append(tui.NewHBox(tui.NewPadder(0, 0, tui.NewLabel(fmt.Sprintf("\n%s,%t\n", "toggling alphabetical sort", !f.alphabetical)))))
