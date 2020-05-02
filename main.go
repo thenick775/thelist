@@ -22,7 +22,7 @@ import (
 var mode = "add"               //default mode upon start is add
 var fname = "themovielist.csv" //file to store list in
 var CurrentList []string       //current in memory list
-var names []string
+var names []string             //names of lists in CurrentList
 
 type searchFlags struct {
 	alphabetical bool //sort alphabetically by name
@@ -34,18 +34,23 @@ type searchFlags struct {
 func addToList(input string, history *tui.Box, list int) {
 	vars := strings.Split(input, ",")
 	if input == "" || len(vars) < 2 || vars[0] == "" || vars[1] == "" {
-		history.Append(tui.NewHBox(tui.NewPadder(0, 0, tui.NewLabel("invalid input for add to list, type fullcmd for help"))))
+		queryerr := tui.NewLabel("invalid input for add to list, type fullcmd for help")
+		queryerr.SetStyleName("err")
+		history.Append(tui.NewHBox(tui.NewPadder(0, 0, queryerr)))
 	} else {
 		ratCheck := regexp.MustCompile(`^[0-5]$`) //check for valid rating
 		valid := ratCheck.MatchString(vars[1])
 		if !valid {
-			history.Append(tui.NewHBox(tui.NewPadder(0, 0, tui.NewLabel("invalid ratinng, must contain rating [0,5]"))))
+			queryerr := tui.NewLabel("invalid ratinng, must contain rating [0,5]")
+			queryerr.SetStyleName("err")
+			history.Append(tui.NewHBox(tui.NewPadder(0, 0, queryerr)))
 			return
 		}
 		//add to history command window
+		queryres := tui.NewLabel(fmt.Sprintf(time.Now().Format("15:04")+" adding '%s' to the list '%s'", vars[0], names[list]))
+		queryres.SetStyleName("res")
 		history.Append(tui.NewHBox(
-			tui.NewLabel(time.Now().Format("15:04")),
-			tui.NewPadder(1, 0, tui.NewLabel(fmt.Sprintf("adding '%s' to the list '%s'", vars[0], names[list]))),
+			tui.NewPadder(0, 0, queryres),
 			tui.NewSpacer(),
 		))
 
@@ -58,9 +63,13 @@ func addToList(input string, history *tui.Box, list int) {
 func filterList(input string, history *tui.Box, f searchFlags, list int) {
 	matched, err := regexp.MatchString(input+`.*\n`, CurrentList[list])
 	if !matched {
-		history.Append(tui.NewHBox(tui.NewPadder(0, 0, tui.NewLabel(time.Now().Format("15:04")+" querying '"+input+"'\nNothing found during filter"))))
+		queryres := tui.NewLabel(time.Now().Format("15:04") + " querying '" + input + "'\nNothing found during filter")
+		queryres.SetStyleName("res")
+		history.Append(tui.NewHBox(tui.NewPadder(0, 0, queryres)))
 	} else if err != nil {
-		history.Append(tui.NewHBox(tui.NewPadder(0, 0, tui.NewLabel("Errr during filter: "+err.Error()))))
+		queryerr := tui.NewLabel("Errr during filter: " + err.Error())
+		queryerr.SetStyleName("err")
+		history.Append(tui.NewHBox(tui.NewPadder(0, 0, queryerr)))
 	} else {
 		rep := regexp.MustCompile(".*" + input + `.*\n`)
 		res := rep.FindAllString(CurrentList[list], -1)
@@ -69,10 +78,11 @@ func filterList(input string, history *tui.Box, f searchFlags, list int) {
 			sort.StringSlice(res).Sort()
 		}
 
+		queryres := tui.NewLabel(fmt.Sprintf(time.Now().Format("15:04")+" querying '%s' list '%s' result size=%d", input, names[list], len(res)))
+		queryres.SetStyleName("res")
 		//add to history command window
 		history.Append(tui.NewHBox(
-			tui.NewLabel(time.Now().Format("15:04")),
-			tui.NewPadder(1, 0, tui.NewLabel(fmt.Sprintf("querying '%s' list '%s' result size=%d", input, names[list], len(res)))),
+			tui.NewPadder(0, 0, queryres),
 			tui.NewSpacer(),
 			tui.NewPadder(1, 0, tui.NewLabel(fmt.Sprintf("\n%s\n", strings.Join(res, "\n")))),
 		))
@@ -85,14 +95,19 @@ func removeFromList(input string, history *tui.Box, list int) {
 	if !matched {
 		history.Append(tui.NewHBox(tui.NewPadder(0, 0, tui.NewLabel("Nothing found during search"))))
 	} else if input == "" {
-		history.Append(tui.NewHBox(tui.NewPadder(0, 0, tui.NewLabel("invalid input for removing from list, type fullcmd for help"))))
+		queryerr := tui.NewLabel("invalid input for removing from list, type fullcmd for help")
+		queryerr.SetStyleName("err")
+		history.Append(tui.NewHBox(tui.NewPadder(0, 0, queryerr)))
 	} else if err != nil {
-		history.Append(tui.NewHBox(tui.NewPadder(0, 0, tui.NewLabel("Errr during search: "+err.Error()))))
+		queryerr := tui.NewLabel("Errr during search: " + err.Error())
+		queryerr.SetStyleName("err")
+		history.Append(tui.NewHBox(tui.NewPadder(0, 0, queryerr)))
 	} else {
+		queryres := tui.NewLabel(fmt.Sprintf(time.Now().Format("15:04")+" removing '%s' from the list '%s'", input, names[list]))
+		queryres.SetStyleName("res")
 		//add to history command window
 		history.Append(tui.NewHBox(
-			tui.NewLabel(time.Now().Format("15:04")),
-			tui.NewPadder(1, 0, tui.NewLabel(fmt.Sprintf("removing '%s' from the list '%s'", input, names[list]))),
+			tui.NewPadder(0, 0, queryres),
 			tui.NewSpacer(),
 		))
 		//remove
@@ -101,18 +116,24 @@ func removeFromList(input string, history *tui.Box, list int) {
 	}
 }
 
-func switchList(input string, history *tui.Box,list int) int{
+func switchList(input string, history *tui.Box, list int) int {
 	var err error
 	newind, err := strconv.Atoi(input)
 	if err != nil {
-		history.Append(tui.NewHBox(tui.NewPadder(0, 0, tui.NewLabel("Invalid input for list to switch to"))))
+		queryerr := tui.NewLabel("Invalid input for list to switch to")
+		queryerr.SetStyleName("err")
+		history.Append(tui.NewHBox(tui.NewPadder(0, 0, queryerr)))
 		return list
 	}
 	if newind >= 0 && newind < len(CurrentList)-1 {
-		history.Append(tui.NewHBox(tui.NewPadder(0, 0, tui.NewLabel(fmt.Sprintf("Switched to list at index %d", newind)))))
+		queryres := tui.NewLabel(fmt.Sprintf("Switched to list at index %d, '%s'", newind, names[newind]))
+		queryres.SetStyleName("res")
+		history.Append(tui.NewHBox(tui.NewPadder(0, 0, queryres)))
 		return newind
 	} else {
-		history.Append(tui.NewHBox(tui.NewPadder(0, 0, tui.NewLabel("invalid switch index number"))))
+		queryerr := tui.NewLabel("invalid switch index number")
+		queryerr.SetStyleName("err")
+		history.Append(tui.NewHBox(tui.NewPadder(0, 0, queryerr)))
 		return list
 	}
 }
@@ -161,7 +182,7 @@ func readData() {
 			CurrentList = append(CurrentList, "")
 			namescnt += 1
 		} else {
-			CurrentList[namescnt] += scanner.Text() + "\n"
+			CurrentList[namescnt] += line + "\n"
 		}
 	}
 
@@ -176,6 +197,11 @@ func main() {
 		alphabetical: false,
 		quickscroll:  false,
 	}
+
+	t := tui.NewTheme()
+	normal := tui.Style{Bg: tui.ColorWhite, Fg: tui.ColorBlack}
+	t.SetStyle("normal", normal)
+
 	//setup initial side labels
 	sidebar := tui.NewVBox(
 		tui.NewLabel("Type:\nsearch\nadd\nremove\nswitch\nor createlist\nto switch mode\n\nUse right arrow\nto toggle scroll"),
@@ -251,7 +277,7 @@ func main() {
 				case "remove":
 					removeFromList(x, history, currentList)
 				case "switch":
-					currentList=switchList(x,history,currentList)
+					currentList = switchList(x, history, currentList)
 				case "createlist": //maybe add removelist in future
 					if x != "" {
 						CurrentList = append(CurrentList, "")
@@ -266,12 +292,18 @@ func main() {
 		input.SetText("")
 	})
 
+	//styles
+	t.SetStyle("label.res", tui.Style{Bg: tui.ColorDefault, Fg: tui.ColorBlue})
+	t.SetStyle("label.err", tui.Style{Bg: tui.ColorDefault, Fg: tui.ColorRed})
+
 	root := tui.NewHBox(sidebar, chat)
 
 	ui, err := tui.New(root)
 	if err != nil {
 		log.Fatal(err)
 	}
+
+	ui.SetTheme(t)
 
 	ui.SetKeybinding("Esc", func() { saveData(history); ui.Quit() })
 	ui.SetKeybinding("Up", func() { historyScroll.Scroll(0, -5) }) //both of these are for scroll mode
