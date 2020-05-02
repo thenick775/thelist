@@ -307,7 +307,7 @@ func main() {
 	ui.SetKeybinding("Up", func() {
 		if f.quickscroll == true {
 			historyScroll.Scroll(0, -5)
-		} else if tmpchloc-1 >= 0 && tmpchloc-1 <= currentchloc%len(chstore)-1 {
+		} else if tmpchloc-1 >= 0 {
 			input.SetText(chstore[tmpchloc-1])
 			tmpchloc = tmpchloc - 1
 		}
