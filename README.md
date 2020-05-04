@@ -1,4 +1,4 @@
-# thelist
+# TheList
 A command line program to make a searchable set of lists, with tags and extendable fields
 
 I built this because sadly, I watch so many movies and read so many books that it became impossible for me to keep track of 
