@@ -9,4 +9,4 @@ This is a quick and dirty listing utility, that makes use of tui-go for coloring
 The search utilizes regular expressions, which is the primary way I wanted to be able to filter and search
 by names/multiple tags.
 
-![](demo.gif)
+![](demo_v2.gif)
