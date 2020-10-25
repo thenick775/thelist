@@ -20,8 +20,8 @@ import (
 //this information. Any recommendations are welcome.
 
 var fname = "themovielist.csv" //file to store list in
-var CurrentList []string       //current in memory list
-var names []string             //names of lists in CurrentList
+var CurrentList []string                                                        //current in memory list
+var names []string                                                              //names of lists in CurrentList
 
 type searchFlags struct {
 	alphabetical bool //sort alphabetically by name
@@ -66,7 +66,7 @@ func filterList(input string, history *tui.Box, f searchFlags, list int) {
 		queryres.SetStyleName("res")
 		history.Append(tui.NewHBox(tui.NewPadder(0, 0, queryres)))
 	} else if err != nil {
-		queryerr := tui.NewLabel("Errr during filter: " + err.Error())
+		queryerr := tui.NewLabel("Error during filter: " + err.Error())
 		queryerr.SetStyleName("err")
 		history.Append(tui.NewHBox(tui.NewPadder(0, 0, queryerr)))
 	} else {
@@ -98,7 +98,7 @@ func removeFromList(input string, history *tui.Box, list int) {
 		queryerr.SetStyleName("err")
 		history.Append(tui.NewHBox(tui.NewPadder(0, 0, queryerr)))
 	} else if err != nil {
-		queryerr := tui.NewLabel("Errr during search: " + err.Error())
+		queryerr := tui.NewLabel("Error during search: " + err.Error())
 		queryerr.SetStyleName("err")
 		history.Append(tui.NewHBox(tui.NewPadder(0, 0, queryerr)))
 	} else {
@@ -158,6 +158,47 @@ func saveData(history *tui.Box) {
 		f.Close()
 		log.Fatal(err)
 	}
+}
+
+func addTag(input string, history *tui.Box, list int) {
+	if strings.Contains(input, " newtag:") || input != ""{
+		params := strings.Split(input, " newtag:")
+		matched, err := regexp.MatchString(params[0]+`.*\n`, CurrentList[list])
+		if !matched {
+			history.Append(tui.NewHBox(tui.NewPadder(0, 0, tui.NewLabel("Nothing found during search"))))
+		} else if err != nil {
+			queryerr := tui.NewLabel("Error during search: " + err.Error())
+			queryerr.SetStyleName("err")
+			history.Append(tui.NewHBox(tui.NewPadder(0, 0, queryerr)))
+		} else if params[0] == "" {
+			queryerr := tui.NewLabel("invalid input for adding tag, type fullcmd for help")
+			queryerr.SetStyleName("err")
+			history.Append(tui.NewHBox(tui.NewPadder(0, 0, queryerr)))
+		} else {
+			params[1]=strings.TrimSpace(params[1])
+			rep := regexp.MustCompile(".*" + params[0] + `.*\n`)
+			res := rep.FindAllString(CurrentList[list], -1)
+
+			if len(res) == 1 {
+				history.Append(tui.NewHBox(tui.NewPadder(0, 0, tui.NewLabel("oldtags:\n"+res[0][0:len(res[0])-1]))))
+				queryres := tui.NewLabel("success")
+				queryres.SetStyleName("res")
+				history.Append(tui.NewHBox(tui.NewPadder(0, 0, queryres)))
+				history.Append(tui.NewHBox(tui.NewPadder(0, 0, tui.NewLabel("newtags:\n"+res[0][0:len(res[0])-1]+" "+params[1]))))
+
+				CurrentList[list]=rep.ReplaceAllString(CurrentList[list], res[0][0:len(res[0])-1]+" "+params[1]+"\n")
+			} else {
+				queryerr := tui.NewLabel("too many search results, add more of the line you would like to add a tag to")
+				queryerr.SetStyleName("err")
+				history.Append(tui.NewHBox(tui.NewPadder(0, 0, queryerr)))
+			}
+		}
+	} else {
+		queryerr := tui.NewLabel("No new tag specified")
+		queryerr.SetStyleName("err")
+		history.Append(tui.NewHBox(tui.NewPadder(0, 0, queryerr)))
+	}
+
 }
 
 //reads existing data upon program start
@@ -248,7 +289,7 @@ func main() {
 	input.OnSubmit(func(e *tui.Entry) {
 		inputtxt := strings.Split(e.Text(), ";")
 		for _, x := range inputtxt {
-			if x == "add" || x == "search" || x == "remove" || x == "switch" || x == "createlist" {
+			if x == "add" || x == "search" || x == "remove" || x == "switch" || x == "createlist" || x == "addtag" {
 				mode = x
 				history.Append(tui.NewHBox(tui.NewPadder(0, 0, tui.NewLabel("switching to mode: "+mode))))
 
@@ -261,13 +302,17 @@ func main() {
 					history.Append(tui.NewHBox(tui.NewPadder(0, 0, tui.NewLabel(listnames+"enter index of list to switch to: "))))
 				} else if x == "createlist" {
 					history.Append(tui.NewHBox(tui.NewPadder(0, 0, tui.NewLabel("enter name of new list"))))
+				} else if x == "addtag" {
+					history.Append(tui.NewHBox(tui.NewPadder(0, 0, tui.NewLabel("enter name of item to add tag"))))
 				}
 			} else if x == "fullcmd" {
-				history.Append(tui.NewHBox(tui.NewLabel("command list:\n\nsearch: type regex to search in names/tags\nuse this format for multiple items:\nex. sci fi or comedy\n(sci fi|comedy)\n\nadd: enter name,rating,tag/tags,...\n\nremove: enter name of movie to remove, or regex matching any other field\n\nswitch: switch to another list by index\n\ncreatelist: create a list with provided name\n\nUse right arrow for quick scroll toggle\nUse Tab key to toggle alphabetical sort\n")))
+				history.Append(tui.NewHBox(tui.NewLabel("command list:\n\nsearch: type regex to search in names/tags\nuse this format for multiple items:\nex. sci fi or comedy\n(sci fi|comedy)\n\nadd: enter name,rating,tag/tags,...\n\nremove: enter name of movie to remove, or regex matching any other field\n\nswitch: switch to another list by index\n\ncreatelist: create a list with provided name\n\naddtag: specify string to serach for to identify single item,\nthen add the identifier 'addtag:' followed by your new tag\n\nUse right arrow for quick scroll toggle\nUse Tab key to toggle alphabetical sort\n")))
 			} else {
 				switch mode {
 				case "add":
 					addToList(x, history, currentList)
+				case "addtag":
+					addTag(x, history, currentList)
 				case "search":
 					filterList(x, history, f, currentList)
 				case "remove":
@@ -307,7 +352,7 @@ func main() {
 	ui.SetKeybinding("Up", func() {
 		if f.quickscroll == true {
 			historyScroll.Scroll(0, -5)
-		} else if tmpchloc-1 >= 0 && tmpchloc-1 <= currentchloc%len(chstore)-1 {
+		} else if tmpchloc-1 >= 0 {
 			input.SetText(chstore[tmpchloc-1])
 			tmpchloc = tmpchloc - 1
 		}
@@ -318,8 +363,8 @@ func main() {
 		} else if tmpchloc+1 < len(chstore) && tmpchloc+1 <= currentchloc%len(chstore)-1 {
 			input.SetText(chstore[tmpchloc+1])
 			tmpchloc = tmpchloc + 1
-		} else if tmpchloc==currentchloc%len(chstore)-1{
-			tmpchloc=currentchloc%len(chstore)
+		} else if tmpchloc == currentchloc%len(chstore)-1 {
+			tmpchloc = currentchloc % len(chstore)
 			input.SetText("")
 		}
 	})
