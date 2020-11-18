@@ -9,4 +9,13 @@ This is a quick and dirty generic listing utility, that makes use of tui-go for 
 The search utilizes regular expressions, which is the primary way I wanted to be able to filter and search
 by names/multiple tags.
 
+#### Features
+- Search items by regular expression
+- Support for multiple lists
+- Sort alphabetically
+- Add/Remove list items
+- Append tags to list items
+
+#### Demo
+
 ![](demo_v2.gif)
