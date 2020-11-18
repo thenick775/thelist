@@ -306,7 +306,7 @@ func main() {
 					history.Append(tui.NewHBox(tui.NewPadder(0, 0, tui.NewLabel("enter name of item to add tag"))))
 				}
 			} else if x == "fullcmd" {
-				history.Append(tui.NewHBox(tui.NewLabel("command list:\n\nsearch: type regex to search in names/tags\nuse this format for multiple items:\nex. sci fi or comedy\n(sci fi|comedy)\n\nadd: enter name,rating,tag/tags,...\n\nremove: enter name of movie to remove, or regex matching any other field\n\nswitch: switch to another list by index\n\ncreatelist: create a list with provided name\n\naddtag: specify string to serach for to identify single item,\nthen add the identifier 'addtag:' followed by your new tag\n\nUse right arrow for quick scroll toggle\nUse Tab key to toggle alphabetical sort\n")))
+				history.Append(tui.NewHBox(tui.NewLabel("command list:\n\nsearch: type regex to search in names/tags\nuse this format for multiple items:\nex. sci fi or comedy\n(sci fi|comedy)\n\nadd: enter name,rating,tag/tags,...\n\nremove: enter name of movie to remove, or regex matching any other field\n\nswitch: switch to another list by index\n\ncreatelist: create a list with provided name\n\naddtag: specify string to serach for to identify single item,\nthen add the identifier 'newtag:' followed by your new tag\n\nUse right arrow for quick scroll toggle\nUse Tab key to toggle alphabetical sort\n")))
 			} else {
 				switch mode {
 				case "add":
