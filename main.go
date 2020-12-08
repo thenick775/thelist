@@ -83,8 +83,9 @@ func filterList(input string, history *tui.Box, f searchFlags, list int) {
 		history.Append(tui.NewHBox(
 			tui.NewPadder(0, 0, queryres),
 			tui.NewSpacer(),
-			tui.NewPadder(1, 0, tui.NewLabel(fmt.Sprintf("\n%s\n", strings.Join(res, "\n")))),
 		))
+
+		history.Append(tui.NewHBox(tui.NewPadder(10, 0, tui.NewLabel(fmt.Sprintf("\n%s\n", strings.Join(res, "\n"))))))
 	}
 }
 
