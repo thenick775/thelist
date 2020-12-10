@@ -4,6 +4,7 @@ import (
 	"bufio"
 	"fmt"
 	"github.com/marcusolsson/tui-go"
+	"github.com/marcusolsson/tui-go/wordwrap"
 	"log"
 	"os"
 	"regexp"
@@ -59,7 +60,7 @@ func addToList(input string, history *tui.Box, list int) {
 }
 
 //filters movie by regular expression (or just movie name/tag), returns entire roow for match
-func filterList(input string, history *tui.Box, f searchFlags, list int) {
+func filterList(input string, history *tui.Box, historyBox *tui.Box, f searchFlags, list int) {
 	matched, err := regexp.MatchString(input+`.*\n`, CurrentList[list])
 	if !matched {
 		queryres := tui.NewLabel(time.Now().Format("15:04") + " querying '" + input + "'\nNothing found during filter")
@@ -85,7 +86,7 @@ func filterList(input string, history *tui.Box, f searchFlags, list int) {
 			tui.NewSpacer(),
 		))
 
-		history.Append(tui.NewHBox(tui.NewPadder(10, 0, tui.NewLabel(fmt.Sprintf("\n%s\n", strings.Join(res, "\n"))))))
+		history.Append(tui.NewHBox(tui.NewPadder(10, 0, tui.NewLabel(wordwrap.WrapString(fmt.Sprintf("\n%s\n", strings.Join(res, "\n")), historyBox.Size().X-20) ))))
 	}
 }
 
@@ -315,7 +316,7 @@ func main() {
 				case "addtag":
 					addTag(x, history, currentList)
 				case "search":
-					filterList(x, history, f, currentList)
+					filterList(x, history, historyBox, f, currentList)
 				case "remove":
 					removeFromList(x, history, currentList)
 				case "switch":
