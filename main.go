@@ -21,8 +21,8 @@ import (
 //this information. Any recommendations are welcome.
 
 var fname = "themovielist.csv" //file to store list in
-var CurrentList []string                                                        //current in memory list
-var names []string                                                              //names of lists in CurrentList
+var CurrentList []string       //current in memory list
+var names []string             //names of lists in CurrentList
 
 type searchFlags struct {
 	alphabetical bool //sort alphabetically by name
@@ -86,8 +86,21 @@ func filterList(input string, history *tui.Box, historyBox *tui.Box, f searchFla
 			tui.NewSpacer(),
 		))
 
-		history.Append(tui.NewHBox(tui.NewPadder(10, 0, tui.NewLabel(wordwrap.WrapString(fmt.Sprintf("\n%s\n", strings.Join(res, "\n")), historyBox.Size().X-20) ))))
+		history.Append(tui.NewHBox(tui.NewPadder(10, 0, tui.NewLabel(wordwrap.WrapString(fmt.Sprintf("\n%s\n", strings.Join(res, "\n")), historyBox.Size().X-20)))))
 	}
+}
+
+//counts current list and appends result to the command window
+func countList(history *tui.Box, list int) {
+	rep := regexp.MustCompile(`.+\n`)
+	lenlist := len(rep.FindAllString(CurrentList[list], -1))
+	res := tui.NewLabel(fmt.Sprintf(time.Now().Format("15:04")+" Count for list '%s' result size=%d", names[list], lenlist))
+	res.SetStyleName("res")
+	//add to history command window
+	history.Append(tui.NewHBox(
+		tui.NewPadder(0, 1, res),
+		tui.NewSpacer(),
+	))
 }
 
 //removes a movie to the CurrentList, to be saved on exit
@@ -163,7 +176,7 @@ func saveData(history *tui.Box) {
 }
 
 func addTag(input string, history *tui.Box, list int) {
-	if strings.Contains(input, " newtag:") || input != ""{
+	if strings.Contains(input, " newtag:") || input != "" {
 		params := strings.Split(input, " newtag:")
 		matched, err := regexp.MatchString(params[0]+`.*\n`, CurrentList[list])
 		if !matched {
@@ -177,7 +190,7 @@ func addTag(input string, history *tui.Box, list int) {
 			queryerr.SetStyleName("err")
 			history.Append(tui.NewHBox(tui.NewPadder(0, 0, queryerr)))
 		} else {
-			params[1]=strings.TrimSpace(params[1])
+			params[1] = strings.TrimSpace(params[1])
 			rep := regexp.MustCompile(".*" + params[0] + `.*\n`)
 			res := rep.FindAllString(CurrentList[list], -1)
 
@@ -188,7 +201,7 @@ func addTag(input string, history *tui.Box, list int) {
 				history.Append(tui.NewHBox(tui.NewPadder(0, 0, queryres)))
 				history.Append(tui.NewHBox(tui.NewPadder(0, 0, tui.NewLabel("newtags:\n"+res[0][0:len(res[0])-1]+" "+params[1]))))
 
-				CurrentList[list]=rep.ReplaceAllString(CurrentList[list], res[0][0:len(res[0])-1]+" "+params[1]+"\n")
+				CurrentList[list] = rep.ReplaceAllString(CurrentList[list], res[0][0:len(res[0])-1]+" "+params[1]+"\n")
 			} else {
 				queryerr := tui.NewLabel("too many search results, add more of the line you would like to add a tag to")
 				queryerr.SetStyleName("err")
@@ -309,6 +322,8 @@ func main() {
 				}
 			} else if x == "fullcmd" {
 				history.Append(tui.NewHBox(tui.NewLabel("command list:\n\nsearch: type regex to search in names/tags\nuse this format for multiple items:\nex. sci fi or comedy\n(sci fi|comedy)\n\nadd: enter name,rating,tag/tags,...\n\nremove: enter name of movie to remove, or regex matching any other field\n\nswitch: switch to another list by index\n\ncreatelist: create a list with provided name\n\naddtag: specify string to serach for to identify single item,\nthen add the identifier 'newtag:' followed by your new tag\n\nUse right arrow for quick scroll toggle\nUse Tab key to toggle alphabetical sort\n")))
+			} else if x == "count()" {
+				countList(history, currentList)
 			} else {
 				switch mode {
 				case "add":
