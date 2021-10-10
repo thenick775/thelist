@@ -21,12 +21,17 @@ import (
 //this information. Any recommendations are welcome.
 
 var fname = "themovielist.csv" //file to store list in
-var CurrentList []string       //current in memory list
-var names []string             //names of lists in CurrentList
+var CurrentList []string                                                        //current in memory list
+var names []string                                                              //names of lists in CurrentList
 
 type searchFlags struct {
 	alphabetical bool //sort alphabetically by name
 	quickscroll  bool
+}
+
+//func for wrapped label
+func wrapLBL(input string, historyBox *tui.Box) *tui.Label {
+	return tui.NewLabel(wordwrap.WrapString(input, historyBox.Size().X-20))
 }
 
 //adds a movie to the CurrentList, to be saved on exit
@@ -86,7 +91,7 @@ func filterList(input string, history *tui.Box, historyBox *tui.Box, f searchFla
 			tui.NewSpacer(),
 		))
 
-		history.Append(tui.NewHBox(tui.NewPadder(10, 0, tui.NewLabel(wordwrap.WrapString(fmt.Sprintf("\n%s\n", strings.Join(res, "\n")), historyBox.Size().X-20)))))
+		history.Append(tui.NewHBox(tui.NewPadder(10, 0, wrapLBL(fmt.Sprintf("\n%s\n", strings.Join(res, "\n")), historyBox))))
 	}
 }
 
@@ -250,15 +255,15 @@ func main() {
 		alphabetical: false,
 		quickscroll:  false,
 	}
-	var chstore [50]string
+	var chstore [50]string //last 50 command cache storage
 	currentchloc, tmpchloc := 0, 0
-	mode := "add" //default mode upon start is add
+	mode := "search" //default mode upon start is add
 
 	//setup initial side labels
 	sidebar := tui.NewVBox(
 		tui.NewLabel("Type:\nsearch\nadd\nremove\nswitch\nor createlist\nto switch mode\n\nUse right arrow\nto toggle scroll"),
 		tui.NewLabel(""),
-		tui.NewLabel("In Search\nspecify:\nregex to find\nname/tag/tags...\nuse semicolon to\ndelimit multiple\nstatements"),
+		tui.NewLabel("In Search\nspecify:\nregex to find\nname/tag/tags...\n\nuse semicolon to\ndelimit multiple\nstatements"),
 		tui.NewLabel(""),
 		tui.NewLabel("Type:\nfullcmd\nto list all\ncommands"),
 		tui.NewLabel(""),
@@ -269,7 +274,7 @@ func main() {
 	history := tui.NewVBox()
 	history.Append(tui.NewHBox(
 		tui.NewLabel(time.Now().Format("15:04")),
-		tui.NewLabel("hello, themovielist has started"),
+		tui.NewLabel(" hello, listing utility has started"),
 	))
 	history.Append(tui.NewHBox(tui.NewPadder(0, 0, tui.NewLabel("currently in mode: "+mode))))
 
@@ -321,7 +326,7 @@ func main() {
 					history.Append(tui.NewHBox(tui.NewPadder(0, 0, tui.NewLabel("enter name of item to add tag"))))
 				}
 			} else if x == "fullcmd" {
-				history.Append(tui.NewHBox(tui.NewLabel("command list:\n\nsearch: type regex to search in names/tags\nuse this format for multiple items:\nex. sci fi or comedy\n(sci fi|comedy)\n\nadd: enter name,rating,tag/tags,...\n\nremove: enter name of movie to remove, or regex matching any other field\n\nswitch: switch to another list by index\n\ncreatelist: create a list with provided name\n\naddtag: specify string to search for to identify single item,\nthen add the identifier 'newtag:' followed by your new tag\n\nUse count() to display a count of the current list\n\nUse right arrow for quick scroll toggle\nUse Tab key to toggle alphabetical sort\n")))
+				history.Append(tui.NewHBox(wrapLBL("command list:\n\nsearch: type regex to search in names/tags\nuse this format for multiple items:\nex. sci fi or comedy\n(sci fi|comedy)\n\nadd: enter name,rating,tag/tags,...\n\nremove: enter name of item to remove, or regex matching any other field\n\nswitch: switch to another list by index\n\ncreatelist: create a list with provided name\n\naddtag: specify string to search for to identify single item,\nthen add the identifier 'newtag:' followed by your new tag\n\nUse count() to display a count of the current list\n\nUse right arrow for quick scroll toggle\nUse Tab key to toggle alphabetical sort\n", historyBox)))
 			} else if x == "count()" {
 				countList(history, currentList)
 			} else {
