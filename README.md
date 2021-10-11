@@ -1,21 +1,19 @@
 # TheList
-A command line program to make a fast, searchable, in memory set of lists, with tags and extendable fields
+An app to make a fast, searchable, in memory set of lists.
 
-I built this because sadly, I watch so many movies and read so many books that it became impossible for me to keep track of 
-my favorites in my head.
+This is a generic listing utility capable of managing multiple lists. Fyne was for the application display and packaging.
 
-This is a quick and dirty generic listing utility, that makes use of tui-go for coloring text and formatting the window display.
+I built this because sadly, I watch so many movies and read so many books that it became impossible for me to keep track of my favorites in my head.
 
-The search utilizes regular expressions, which is the primary way I wanted to be able to filter and search
-by names/multiple tags.
+The search utilizes regular expressions, which is the primary way I wanted to be able to filter and search by names/multiple tags.
 
 #### Features
-- Search items by regular expression
+- Search list items by regular expression
 - Support for multiple lists
 - Sort alphabetically
-- Add/Remove list items
-- Append tags to list items
+- Add/Remove/Edit/Delete list items
+- Add/Remove/Edit/Delete lists
 
 #### Demo
 
-![](demo_v2.gif)
+![](demo_fyne_v1.gif)
