@@ -22,7 +22,7 @@ func setupSystemMenu(w fyne.Window, a fyne.App) {
 			items := []*widget.FormItem{
 				widget.NewFormItem("File name", dirpath),
 			}
-			dialog.ShowForm("New Directory", "Submit", "Cancel", items, func(b bool) {
+			dialog.ShowForm("New File", "Submit", "Cancel", items, func(b bool) {
 				if b {
 					empty, err := os.Create(dirpath.Text)
 					if err != nil {
