@@ -3,7 +3,7 @@ An app to make a fast, searchable, in memory set of lists.
 
 This is a generic listing utility capable of managing multiple lists. Fyne was used for the application display and packaging.
 
-I built this because sadly, I watch so many movies and read so many books that it became impossible for me to keep track of my favorites in my head.
+I built this because I watch so many movies and read so many books that it became impossible for me to keep track of my favorites in my head.
 
 The search utilizes regular expressions, which is the primary way I wanted to be able to filter and search by names/multiple item tags.
 
