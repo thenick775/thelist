@@ -4,16 +4,53 @@ import (
 	"fmt"
 	"fyne.io/fyne/v2"
 	"fyne.io/fyne/v2/cmd/fyne_settings/settings"
+	"fyne.io/fyne/v2/data/validation"
+	"fyne.io/fyne/v2/dialog"
 	"fyne.io/fyne/v2/theme"
+	"fyne.io/fyne/v2/widget"
 	"net/url"
+	"os"
 )
 
 //system menu setup, this is the "external" system menu
 func setupSystemMenu(w fyne.Window, a fyne.App) {
 	newItem := fyne.NewMenuItem("New", nil)
 	newItem.ChildMenu = fyne.NewMenu("",
-		fyne.NewMenuItem("File", func() { fmt.Println("Menu New->File") }),
-		fyne.NewMenuItem("Directory", func() { fmt.Println("Menu New->Directory") }),
+		fyne.NewMenuItem("File", func() {
+			dirpath := widget.NewEntry()
+			dirpath.Validator = validation.NewRegexp(`^.+$`, "file name must not be empty")
+			items := []*widget.FormItem{
+				widget.NewFormItem("File name", dirpath),
+			}
+			dialog.ShowForm("New Directory", "Submit", "Cancel", items, func(b bool) {
+				if b {
+					empty, err := os.Create(dirpath.Text)
+					if err != nil {
+						dialog.ShowError(fmt.Errorf("Failed to create new file"), w)
+					} else {
+						dialog.ShowInformation("Information", "File successfully created", w)
+						empty.Close()
+					}
+				}
+			}, w)
+		}),
+		fyne.NewMenuItem("Directory", func() {
+			dirpath := widget.NewEntry()
+			dirpath.Validator = validation.NewRegexp(`^.+$`, "dir path must not be empty")
+			items := []*widget.FormItem{
+				widget.NewFormItem("Directory path", dirpath),
+			}
+			dialog.ShowForm("New Directory", "Submit", "Cancel", items, func(b bool) {
+				if b {
+					err := os.MkdirAll(dirpath.Text, os.ModePerm)
+					if err != nil {
+						dialog.ShowError(fmt.Errorf("Failed to create Directory"), w)
+					} else {
+						dialog.ShowInformation("Information", "Directory successfully created", w)
+					}
+				}
+			}, w)
+		}),
 	)
 	settingsItem := fyne.NewMenuItem("Settings", func() {
 		w := a.NewWindow("Fyne Settings")
