@@ -9,6 +9,8 @@ The search utilizes regular expressions, which is the primary way I wanted to be
 
 This is the currnt version of this software, the terminal TUI utility was retired in favor of the graphical display, where keyboard shortcuts for this version were included for ease of use.
 
+This application has been tested and packaged on OSX, where the script included places the configuration file next to the executable.
+
 #### Features
 - Search list items by regular expression
 - Support for multiple lists
