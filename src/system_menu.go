@@ -44,9 +44,11 @@ func setupSystemMenu(w fyne.Window, a fyne.App) {
 			u, _ := url.Parse("https://github.com/thenick775/thelist")
 			_ = a.OpenURL(u)
 		}),
-		fyne.NewMenuItem("Support", func() {}),
+		fyne.NewMenuItem("Shortcut Keys", func() {}),
 		fyne.NewMenuItemSeparator(),
+		fyne.NewMenuItem("Support", func() {}),
 		fyne.NewMenuItem("Sponsor", func() {}))
+
 	themeMenu := fyne.NewMenu("Theme",
 		fyne.NewMenuItem("Dark", func() {
 			a.Settings().SetTheme(theme.DarkTheme())
@@ -54,6 +56,14 @@ func setupSystemMenu(w fyne.Window, a fyne.App) {
 		fyne.NewMenuItem("Light", func() {
 			a.Settings().SetTheme(theme.LightTheme())
 		}))
+
+	sortItem := fyne.NewMenuItem("Sort", nil)
+	sortItem.ChildMenu = fyne.NewMenu("",
+		fyne.NewMenuItem("Alpha ASC", func() { fmt.Println("File ASC sort") }),
+		fyne.NewMenuItem("Alpha DESC", func() { fmt.Println("File DESC sort") }),
+	)
+	dataMenu := fyne.NewMenu("Data", sortItem)
+
 	file := fyne.NewMenu("File", newItem)
 	if !fyne.CurrentDevice().IsMobile() {
 		file.Items = append(file.Items, fyne.NewMenuItemSeparator(), settingsItem)
@@ -63,6 +73,7 @@ func setupSystemMenu(w fyne.Window, a fyne.App) {
 		file,
 		fyne.NewMenu("Edit", cutItem, copyItem, pasteItem, fyne.NewMenuItemSeparator(), findItem),
 		themeMenu,
+		dataMenu,
 		helpMenu,
 	)
 	w.SetMainMenu(mainMenu)

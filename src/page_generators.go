@@ -10,6 +10,7 @@ import (
 	"fyne.io/fyne/v2/theme"
 	"fyne.io/fyne/v2/widget"
 	"io/ioutil"
+	"os"
 	"strconv"
 	"strings"
 )
@@ -39,7 +40,6 @@ func genAddForm(_ fyne.Window) fyne.CanvasObject {
 			//rating.SetValidationError(nil)
 			tagentry.SetText("")
 			//tagentry.SetValidationError(nil)
-			fmt.Println("Cancelled")
 		},
 		OnSubmit: func() {
 			if state.noList || state.currentList == "" {
@@ -109,7 +109,6 @@ func genRemove(w fyne.Window) fyne.CanvasObject {
 		OnCancel: func() {
 			name.SetText("")
 			//name.SetValidationError(nil)
-			fmt.Println("Cancelled")
 		},
 		OnSubmit: func() {
 			if state.noList || state.currentList == "" {
@@ -117,7 +116,6 @@ func genRemove(w fyne.Window) fyne.CanvasObject {
 				return
 			}
 			cnf := dialog.NewConfirm("Confirmation", "Are you sure you want to delete?", func(response bool) {
-				fmt.Println("Responded with", response)
 				if response {
 					ok := lists.RemoveElementByName(name.Text)
 					if !ok {
@@ -135,7 +133,6 @@ func genRemove(w fyne.Window) fyne.CanvasObject {
 						lists.ShowData.data.Reload()
 						name.SetText("")
 						name.SetValidationError(nil)
-						fmt.Println("ok remove elem")
 					}
 				} else {
 					fmt.Println("do not remove elem")
@@ -187,7 +184,6 @@ func genEdit(_ fyne.Window) fyne.CanvasObject {
 			name.SetText(item.Name)
 			rating.SetText(strconv.Itoa(item.Rating))
 			tagentry.SetText(item.Tags)
-			fmt.Println("Cancelled")
 		},
 		OnSubmit: func() {
 			if state.noList || state.currentList == "" {
@@ -237,6 +233,11 @@ func genConfEdit(w fyne.Window) fyne.CanvasObject {
 			cnf := dialog.NewConfirm("Confirmation", "Are you sure you want to edit your configuration?", func(response bool) {
 				if response {
 					conf["configuration"].(map[string]interface{})["default selected"] = defaultSelected.Text
+
+					if defaultList.Text != conf["configuration"].(map[string]interface{})["default list"].(string) {
+						conf["configuration"].(map[string]interface{})["default list"] = defaultList.Text
+					}
+
 					if defaultTheme.Text != conf["configuration"].(map[string]interface{})["default theme"] {
 						if strings.EqualFold(defaultTheme.Text, "light") {
 							a.Settings().SetTheme(theme.LightTheme())
@@ -252,9 +253,32 @@ func genConfEdit(w fyne.Window) fyne.CanvasObject {
 						if state.noList && localItemFile.Text != "" {
 							state.noList = false
 						}
+						//determine whether to load file
+						if _, err := os.Stat(localItemFile.Text); err == nil {
+							// file exists
+							byteValue, err := ioutil.ReadFile(localItemFile.Text)
+							if err != nil {
+								fmt.Println("local item error")
+								panic(err) //dont really want to panic here
+							}
+							err = json.Unmarshal(byteValue, &lists.Data)
+							if err != nil {
+								panic(err) //dont really want to panic here
+							}
+							if state.currentList == "" {
+								if conf["configuration"].(map[string]interface{})["default list"].(string) != "" {
+									state.currentList = conf["configuration"].(map[string]interface{})["default list"].(string)
+								} else {
+									listnames := lists.GetOrderedListNames()
+									if len(listnames) > 0 {
+										state.currentList = listnames[0]
+									}
+								}
+							}
+							lists.Initialize()
+							dialog.ShowInformation("Information", "List successfully initialized from file", w)
+						}
 					}
-
-					conf["configuration"].(map[string]interface{})["default list"] = defaultList.Text
 
 					conf_rewrite, _ := json.MarshalIndent(conf, "", " ")
 					err := ioutil.WriteFile(confLoc, conf_rewrite, 0644)
@@ -312,7 +336,6 @@ func genAddList(_ fyne.Window) fyne.CanvasObject {
 			{Text: "New List", Widget: newList, HintText: "Your new list name"},
 		},
 		OnCancel: func() {
-			fmt.Println("Cancelled")
 			newList.SetText("")
 			//newList.SetValidationError(nil)
 		},
@@ -347,7 +370,6 @@ func genEditList(_ fyne.Window) fyne.CanvasObject {
 		},
 		OnCancel: func() {
 			newList.SetText(state.currentList)
-			fmt.Println("Cancelled")
 		},
 		OnSubmit: func() {
 			if state.noList || state.currentList == "" {
@@ -377,7 +399,6 @@ func genDeleteList(_ fyne.Window) fyne.CanvasObject {
 			{Text: "Delete List", Widget: delList, HintText: "Your list to delete"},
 		},
 		OnCancel: func() {
-			fmt.Println("Cancelled")
 			delList.SetText("")
 			//delList.SetValidationError(nil)
 		},
