@@ -18,6 +18,16 @@ This application has been tested and packaged on OSX, where the script included 
 - Add/Remove/Edit/Delete list items
 - Add/Remove/Edit/Delete lists
 
+#### Application File System Structure
+TheList.app
+└── Contents
+    ├── Info.plist
+    ├── MacOS
+    │   ├── conf.json
+    │   └── the-list
+    └── Resources
+        └── icon.icns
+
 #### Demo
 
 ![](demo_fyne_v1.gif)
