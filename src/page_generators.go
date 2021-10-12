@@ -258,25 +258,26 @@ func genConfEdit(w fyne.Window) fyne.CanvasObject {
 							// file exists
 							byteValue, err := ioutil.ReadFile(localItemFile.Text)
 							if err != nil {
-								fmt.Println("local item error")
-								panic(err) //dont really want to panic here
-							}
-							err = json.Unmarshal(byteValue, &lists.Data)
-							if err != nil {
-								panic(err) //dont really want to panic here
-							}
-							if state.currentList == "" {
-								if conf["configuration"].(map[string]interface{})["default list"].(string) != "" {
-									state.currentList = conf["configuration"].(map[string]interface{})["default list"].(string)
+								dialog.ShowError(fmt.Errorf("Failed to read new listing file"), w)
+							} else {
+								err = json.Unmarshal(byteValue, &lists.Data)
+								if err != nil {
+									dialog.ShowError(fmt.Errorf("Failed to load new listing file"), w)
 								} else {
-									listnames := lists.GetOrderedListNames()
-									if len(listnames) > 0 {
-										state.currentList = listnames[0]
+									if state.currentList == "" {
+										if conf["configuration"].(map[string]interface{})["default list"].(string) != "" {
+											state.currentList = conf["configuration"].(map[string]interface{})["default list"].(string)
+										} else {
+											listnames := lists.GetOrderedListNames()
+											if len(listnames) > 0 {
+												state.currentList = listnames[0]
+											}
+										}
 									}
+									lists.Initialize()
+									dialog.ShowInformation("Information", "List successfully initialized from file", w)
 								}
 							}
-							lists.Initialize()
-							dialog.ShowInformation("Information", "List successfully initialized from file", w)
 						}
 					}
 
