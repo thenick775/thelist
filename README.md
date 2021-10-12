@@ -18,7 +18,7 @@ This application has been tested and packaged on OSX, where the script included 
 - Add/Remove/Edit/Delete list items
 - Add/Remove/Edit/Delete lists
 
-#### Application File System Structure
+#### Application File System Structure (OSX)
 ```
 TheList.app
 └── Contents
