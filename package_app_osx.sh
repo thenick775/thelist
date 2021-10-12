@@ -3,7 +3,7 @@
 cd ./src;go fmt; cd ..;
 appname=TheList
 GO_PATH=$(go env | grep "GOPATH" | grep -o "\".*\"" | tr -d '"')
-CGO_ENABLED=1 $GO_PATH/bin/fyne package -os darwin --src ./src -icon ./images/TheList.png --name $appname
+CGO_ENABLED=1 $GO_PATH/bin/fyne package -os darwin --src ./src -icon ./images/TheList-large.png --name $appname
 
 if [ $? -eq 0 ]; then
    echo "compilation/packaging succeeded"
