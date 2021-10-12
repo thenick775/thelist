@@ -19,6 +19,7 @@ This application has been tested and packaged on OSX, where the script included 
 - Add/Remove/Edit/Delete lists
 
 #### Application File System Structure
+```
 TheList.app
 └── Contents
     ├── Info.plist
@@ -27,6 +28,7 @@ TheList.app
     │   └── the-list
     └── Resources
         └── icon.icns
+```
 
 #### Demo
 
