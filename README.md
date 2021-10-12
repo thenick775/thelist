@@ -17,6 +17,7 @@ This application has been tested and packaged on OSX, where the script included 
 - Sort alphabetically
 - Add/Remove/Edit/Delete list items
 - Add/Remove/Edit/Delete lists
+- Light/Dark theme support
 
 #### Application File System Structure (OSX)
 ```
