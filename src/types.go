@@ -60,4 +60,10 @@ type AppState struct {
 	currentList     string
 	currentMenuItem string
 	noList          bool
+	alphasort       AlphaSort
+}
+
+type AlphaSort struct {
+	enabled bool
+	order   int //0 asc, 1 desc
 }
