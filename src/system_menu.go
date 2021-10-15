@@ -95,9 +95,24 @@ func setupSystemMenu(w fyne.Window, a fyne.App) {
 		}))
 
 	sortItem := fyne.NewMenuItem("Sort", nil)
-	sortItem.ChildMenu = fyne.NewMenu("",
-		fyne.NewMenuItem("Alpha ASC", func() { fmt.Println("File ASC sort") }),
-		fyne.NewMenuItem("Alpha DESC", func() { fmt.Println("File DESC sort") }),
+	sortItem.ChildMenu = fyne.NewMenu("", fyne.NewMenuItem("Alpha ASC", func() {
+		if !state.alphasort.enabled {
+			state.alphasort.enabled = true
+		}
+		state.alphasort.order = 0
+		lists.RegexSearch(lists.SelectEntry.Text)
+	}),
+		fyne.NewMenuItem("Alpha DESC", func() {
+			if !state.alphasort.enabled {
+				state.alphasort.enabled = true
+			}
+			state.alphasort.order = 1
+			lists.RegexSearch(lists.SelectEntry.Text)
+		}),
+		fyne.NewMenuItem("Enable/Disable", func() {
+			state.alphasort.enabled = !state.alphasort.enabled
+			lists.RegexSearch(lists.SelectEntry.Text)
+		}),
 	)
 	dataMenu := fyne.NewMenu("Data", sortItem)
 

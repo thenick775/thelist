@@ -25,10 +25,18 @@ func (i *Inquiry) Initialize() {
 
 func (l *userList) Initialize() {
 	l.ListModified = false
-	l.ShowData = listData{strlist: lists.GenListFromMap(state.currentList)} //gaurd this?
-	l.ShowData.data = binding.BindStringList(
-		&l.ShowData.strlist,
-	)
+	if state.alphasort.enabled {
+		l.ShowData = listData{strlist: []string{}}
+		l.ShowData.data = binding.BindStringList(
+			&l.ShowData.strlist,
+		)
+		lists.GenListFromMap(state.currentList)
+	} else {
+		l.ShowData = listData{strlist: lists.GenListFromMap(state.currentList)} //gaurd this?
+		l.ShowData.data = binding.BindStringList(
+			&l.ShowData.strlist,
+		)
+	}
 
 	l.SelectEntry = newInquiryEntry()
 	l.SelectEntry.PlaceHolder = "Type your regular expression"
@@ -42,6 +50,12 @@ func (l *userList) Initialize() {
 			o.(*widget.Label).Bind(i.(binding.String))
 		})
 	l.List.OnSelected = inquiryIndexAndExpand
+
+	if state.alphasort.enabled {
+		inquiry.InqIntro = widget.NewLabel("Type your regex query here,\nuse the enter key to filter your list")
+		inquiry.InqIntro.Wrapping = fyne.TextWrapWord
+		l.RegexSearch("")
+	}
 }
 
 func newInquiryEntry() *inquiryEntry {
@@ -55,12 +69,15 @@ func newInquiryEntry() *inquiryEntry {
 func (i *inquiryEntry) KeyDown(key *fyne.KeyEvent) {
 	switch key.Name {
 	case fyne.KeyReturn:
-		if i.Text == "" {
+		if i.Text == "" && !state.alphasort.enabled {
 			lists.ShowData.strlist = lists.GenListFromMap(state.currentList)
 			lists.SelectEntry.list_loc = 0
 			lists.ShowData.data.Reload()
 			lists.List.Select(0)
 			inquiry.LinkageMap = nil
+			inquiry.InqIntro.SetText("Type your regex query here,\nuse the enter key to filter your list")
+		} else if i.Text == "" {
+			lists.RegexSearch(i.Text)
 			inquiry.InqIntro.SetText("Type your regex query here,\nuse the enter key to filter your list")
 		} else {
 			lists.RegexSearch(i.Text)
@@ -69,12 +86,12 @@ func (i *inquiryEntry) KeyDown(key *fyne.KeyEvent) {
 		i.Entry.KeyDown(key)
 		lists.List.Select(i.list_loc + 1)
 		inquiry.InquiryScrollStop = true
-		go inquiryScroll(*key, i.list_loc)
+		go inquiryScroll(*key, i.list_loc + 1)
 	case fyne.KeyUp: //for inquiry list navigation
 		i.Entry.KeyUp(key)
 		lists.List.Select(i.list_loc - 1)
 		inquiry.InquiryScrollStop = true
-		go inquiryScroll(*key, i.list_loc)
+		go inquiryScroll(*key, i.list_loc - 1)
 	case fyne.KeyLeft: //for inquiry list
 		inquiry.InquiryTabs.SelectTabIndex(0)
 	case fyne.KeyRight: //for inquiry detail
@@ -166,14 +183,14 @@ func inquiryScroll(key fyne.KeyEvent, loc int) {
 				inquiry.InquiryScrollStop = false
 				break
 			}
-			lists.List.Select(loc + 1)
+			lists.List.Select(loc)
 		case fyne.KeyUp: //for inquiry list navigation
 			loc -= 1
 			if loc < 0 {
 				inquiry.InquiryScrollStop = false
 				break
 			}
-			lists.List.Select(loc - 1)
+			lists.List.Select(loc)
 		}
 	}
 }
@@ -182,12 +199,20 @@ func (l *userList) GenListFromMap(key string) []string {
 	var res []string
 	var searchstr bytes.Buffer
 	inquiry.SearchMap = make(map[string]int)
+	f, toremove := "", 0
 
 	for idx, val := range l.Data[key] {
 		res = append(res, val.Name)
-		f := fmt.Sprintf("%s %s %s\n", val.Name, strconv.Itoa(val.Rating), val.Tags)
+		if idx == len(l.Data[key])-1 {
+			f = fmt.Sprintf("%s %s %s", val.Name, strconv.Itoa(val.Rating), val.Tags)
+			toremove = len(f)
+		} else {
+			f = fmt.Sprintf("%s %s %s\n", val.Name, strconv.Itoa(val.Rating), val.Tags)
+			toremove = len(f) - 1
+		}
+
 		searchstr.WriteString(f)
-		inquiry.SearchMap[f[:len(f)-1]] = idx //generate regex search map, no linefeed
+		inquiry.SearchMap[f[:toremove]] = idx //generate regex search map, no linefeed
 	}
 	inquiry.FilterList = searchstr.String() //generate regex  search string
 	return res
@@ -209,6 +234,18 @@ func (l *userList) GetOrderedListNames() []string {
 func (l *userList) RegexSearch(input string) {
 	rep := regexp.MustCompile("(?im)^.*" + input + `.*$`)
 	res := rep.FindAllString(inquiry.FilterList, -1)
+
+	if state.alphasort.enabled {
+		switch state.alphasort.order {
+		case 0:
+			fmt.Println("sorting res regex search")
+			sort.Strings(res)
+		case 1:
+			fmt.Println("sorting desc regex search")
+			sort.Sort(sort.Reverse(sort.StringSlice(res)))
+		}
+	}
+
 	rescnt, tmp := 0, []string{}
 	tmplinkage := make(map[int]int)
 	//generate linkage to orginal data mapping

@@ -58,6 +58,8 @@ func main() {
 	local_item_file := conf["configuration"].(map[string]interface{})["local item file"].(string)
 	state.currentList = conf["configuration"].(map[string]interface{})["default list"].(string)
 	state.noList = false
+	state.alphasort.enabled = false
+	state.alphasort.order = 1
 
 	a = app.NewWithID("com.vancise.thelist")
 	a.SetIcon(theme.FyneLogo())
@@ -82,8 +84,8 @@ func main() {
 	}
 
 	//intialize lists and inquiry
-	lists.Initialize()
 	inquiry.Initialize()
+	lists.Initialize()
 
 	mainView := container.NewMax() //placeholder that will take up max size of panel
 	tree = menuTree(w, mainView, defaultBranch, defaultSelected)
