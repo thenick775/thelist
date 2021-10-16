@@ -73,12 +73,10 @@ func (i *inquiryEntry) KeyDown(key *fyne.KeyEvent) {
 			lists.ShowData.strlist = lists.GenListFromMap(state.currentList)
 			lists.SelectEntry.list_loc = 0
 			lists.ShowData.data.Reload()
-			lists.List.Select(0)
 			inquiry.LinkageMap = nil
-			inquiry.InqIntro.SetText("Type your regex query here,\nuse the enter key to filter your list")
-		} else if i.Text == "" {
-			lists.RegexSearch(i.Text)
-			inquiry.InqIntro.SetText("Type your regex query here,\nuse the enter key to filter your list")
+			lists.List.Select(0)
+			inquiryIndexAndExpand(0)
+			inquiry.InqIntro.SetText("Type your regex query here,\nuse the enter key to filter your list:\n" + state.currentList + ", size: " + strconv.Itoa(len(lists.Data[state.currentList])))
 		} else {
 			lists.RegexSearch(i.Text)
 		}
@@ -86,12 +84,12 @@ func (i *inquiryEntry) KeyDown(key *fyne.KeyEvent) {
 		i.Entry.KeyDown(key)
 		lists.List.Select(i.list_loc + 1)
 		inquiry.InquiryScrollStop = true
-		go inquiryScroll(*key, i.list_loc + 1)
+		go inquiryScroll(*key, i.list_loc+1)
 	case fyne.KeyUp: //for inquiry list navigation
 		i.Entry.KeyUp(key)
 		lists.List.Select(i.list_loc - 1)
 		inquiry.InquiryScrollStop = true
-		go inquiryScroll(*key, i.list_loc - 1)
+		go inquiryScroll(*key, i.list_loc-1)
 	case fyne.KeyLeft: //for inquiry list
 		inquiry.InquiryTabs.SelectTabIndex(0)
 	case fyne.KeyRight: //for inquiry detail
@@ -163,8 +161,12 @@ func deskdown(key *fyne.KeyEvent) {
 }
 
 func deskup(key *fyne.KeyEvent) {
-	switch key.Name {
-	case fyne.KeyDown: //for inquiry
+	switch key.Name { //for inquiry
+	case fyne.KeyLeft:
+		fallthrough
+	case fyne.KeyRight:
+		fallthrough
+	case fyne.KeyDown:
 		fallthrough
 	case fyne.KeyUp: //for inquiry list navigation
 		inquiry.InquiryScrollStop = false
@@ -261,7 +263,11 @@ func (l *userList) RegexSearch(input string) {
 	}
 
 	inquiry.LinkageMap = tmplinkage
-	inquiry.InqIntro.SetText("Querying List: " + state.currentList + ", query: " + input + "\nresult size: " + strconv.Itoa(len(res)))
+	if input == "" {
+		inquiry.InqIntro.SetText("Type your regex query here,\nuse the enter key to filter your list:\n" + state.currentList + ", size: " + strconv.Itoa(len(lists.Data[state.currentList])))
+	} else {
+		inquiry.InqIntro.SetText("Querying List: " + state.currentList + ", query: " + input + "\nresult size: " + strconv.Itoa(len(res)))
+	}
 	lists.ShowData.strlist = tmp
 	lists.SelectEntry.list_loc = 0
 	lists.ShowData.data.Reload()

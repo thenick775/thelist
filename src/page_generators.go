@@ -73,7 +73,7 @@ func genAddForm(_ fyne.Window) fyne.CanvasObject {
 func genInquire(_ fyne.Window) fyne.CanvasObject {
 	inquiry.InqTitle = widget.NewLabel("Inquire")
 	if inquiry.LinkageMap == nil { //need to fix this here
-		inquiry.InqIntro = widget.NewLabel("Type your regex query here,\nuse the enter key to filter your list")
+		inquiry.InqIntro = widget.NewLabel("Type your regex query here,\nuse the enter key to filter your list:\n" + state.currentList + ", size: " + strconv.Itoa(len(lists.Data[state.currentList])))
 	}
 	inquiry.InqIntro.Wrapping = fyne.TextWrapWord
 
@@ -310,12 +310,18 @@ func genSwitchList(_ fyne.Window) fyne.CanvasObject {
 	keys := lists.GetOrderedListNames()
 
 	radiogr := widget.NewRadioGroup(keys, func(s string) {
-		lists.ShowData.strlist = lists.GenListFromMap(s)
-		lists.ShowData.data.Reload()
-		lists.SelectEntry.list_loc = 0
 		state.currentList = s
-		lists.List.Select(lists.SelectEntry.list_loc)
-		inquiryIndexAndExpand(0)
+		lists.SelectEntry.SetText("")
+		if state.alphasort.enabled {
+			lists.GenListFromMap(s)
+			lists.RegexSearch("")
+		} else {
+			lists.ShowData.strlist = lists.GenListFromMap(s)
+			lists.ShowData.data.Reload()
+			lists.SelectEntry.list_loc = 0
+			lists.List.Select(lists.SelectEntry.list_loc)
+			inquiryIndexAndExpand(0)
+		}
 	})
 	radiogr.Horizontal = false
 	radiogr.Required = true
