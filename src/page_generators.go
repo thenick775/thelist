@@ -48,9 +48,15 @@ func genAddForm(_ fyne.Window) fyne.CanvasObject {
 			}
 			intVar, _ := strconv.Atoi(rating.Text)
 			lists.Data[state.currentList] = append(lists.Data[state.currentList], ListItem{Name: name.Text, Rating: intVar, Tags: tagentry.Text})
-			lists.ShowData.strlist = append(lists.ShowData.strlist, name.Text)
-			lists.ShowData.data.Reload()
-			inquiry.FilterList += fmt.Sprintf("%s %s %s\n", name.Text, rating.Text, tagentry.Text)
+			inquiry.FilterList += fmt.Sprintf("\n%s %s %s", name.Text, rating.Text, tagentry.Text)
+			if inquiry.LinkageMap != nil { //refresh the linkage map/search map
+				f := fmt.Sprintf("%s %s %s", name.Text, rating.Text, tagentry.Text)
+				inquiry.SearchMap[f] = len(lists.Data[state.currentList]) - 1
+				lists.RegexSearch(lists.SelectEntry.Text)
+			} else { //append shown data to existing baselist
+				lists.ShowData.strlist = append(lists.ShowData.strlist, name.Text)
+				lists.ShowData.data.Reload()
+			}
 			name.SetText("")
 			name.SetValidationError(nil)
 			rating.SetText("")
@@ -217,6 +223,7 @@ func genConfEdit(w fyne.Window) fyne.CanvasObject {
 	defaultTheme := widget.NewSelectEntry([]string{"Light", "Dark"})
 	defaultTheme.SetText(conf["configuration"].(map[string]interface{})["default theme"].(string))
 	localItemFile := NewSubmitEntry()
+	localItemFile.Validator = validation.NewRegexp(`^.+$`, "file path must not be empty")
 	localItemFile.SetText(conf["configuration"].(map[string]interface{})["local item file"].(string))
 
 	form := &widget.Form{
@@ -281,11 +288,7 @@ func genConfEdit(w fyne.Window) fyne.CanvasObject {
 						}
 					}
 
-					conf_rewrite, _ := json.MarshalIndent(conf, "", " ")
-					err := ioutil.WriteFile(confLoc, conf_rewrite, 0644)
-					if err != nil {
-						fmt.Println(err) //dialog here as well
-					}
+					write_conf()
 				} else {
 					defaultList.SetText(conf["configuration"].(map[string]interface{})["default list"].(string))
 					defaultSelected.SetText(conf["configuration"].(map[string]interface{})["default selected"].(string))

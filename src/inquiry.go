@@ -237,13 +237,11 @@ func (l *userList) RegexSearch(input string) {
 	rep := regexp.MustCompile("(?im)^.*" + input + `.*$`)
 	res := rep.FindAllString(inquiry.FilterList, -1)
 
-	if state.alphasort.enabled {
+	if state.alphasort.enabled { //order for alphabetical sort if enabled
 		switch state.alphasort.order {
 		case 0:
-			fmt.Println("sorting res regex search")
 			sort.Strings(res)
 		case 1:
-			fmt.Println("sorting desc regex search")
 			sort.Sort(sort.Reverse(sort.StringSlice(res)))
 		}
 	}

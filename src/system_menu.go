@@ -52,6 +52,16 @@ func setupSystemMenu(w fyne.Window, a fyne.App) {
 			}, w)
 		}),
 	)
+	exportItem := fyne.NewMenuItem("Export", nil)
+	exportItem.ChildMenu = fyne.NewMenu("",
+		fyne.NewMenuItem("CSV", func() {
+			NewExportPop("CSV")
+		}),
+		fyne.NewMenuItem("JSON", func() {
+			NewExportPop("JSON")
+		}),
+	)
+
 	settingsItem := fyne.NewMenuItem("Settings", func() {
 		w := a.NewWindow("Fyne Settings")
 		w.SetContent(settings.NewSettings().LoadAppearanceScreen(w))
@@ -81,10 +91,14 @@ func setupSystemMenu(w fyne.Window, a fyne.App) {
 			u, _ := url.Parse("https://github.com/thenick775/thelist")
 			_ = a.OpenURL(u)
 		}),
-		fyne.NewMenuItem("Shortcut Keys", func() {}),
+		fyne.NewMenuItem("Shortcut Keys", func() {
+			genKeyBoardShortcutPopup()
+		}),
 		fyne.NewMenuItemSeparator(),
-		fyne.NewMenuItem("Support", func() {}),
-		fyne.NewMenuItem("Sponsor", func() {}))
+		fyne.NewMenuItem("Support", func() {
+			u, _ := url.Parse("https://github.com/thenick775/thelist")
+			_ = a.OpenURL(u)
+		}))
 
 	themeMenu := fyne.NewMenu("Theme",
 		fyne.NewMenuItem("Dark", func() {
@@ -96,16 +110,12 @@ func setupSystemMenu(w fyne.Window, a fyne.App) {
 
 	sortItem := fyne.NewMenuItem("Sort", nil)
 	sortItem.ChildMenu = fyne.NewMenu("", fyne.NewMenuItem("Alpha ASC", func() {
-		if !state.alphasort.enabled {
-			state.alphasort.enabled = true
-		}
+		state.alphasort.enabled = true
 		state.alphasort.order = 0
 		lists.RegexSearch(lists.SelectEntry.Text)
 	}),
 		fyne.NewMenuItem("Alpha DESC", func() {
-			if !state.alphasort.enabled {
-				state.alphasort.enabled = true
-			}
+			state.alphasort.enabled = true
 			state.alphasort.order = 1
 			lists.RegexSearch(lists.SelectEntry.Text)
 		}),
@@ -116,7 +126,7 @@ func setupSystemMenu(w fyne.Window, a fyne.App) {
 	)
 	dataMenu := fyne.NewMenu("Data", sortItem)
 
-	file := fyne.NewMenu("File", newItem)
+	file := fyne.NewMenu("File", newItem, exportItem)
 	if !fyne.CurrentDevice().IsMobile() {
 		file.Items = append(file.Items, fyne.NewMenuItemSeparator(), settingsItem)
 	}

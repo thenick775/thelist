@@ -59,7 +59,7 @@ func main() {
 	state.currentList = conf["configuration"].(map[string]interface{})["default list"].(string)
 	state.noList = false
 	state.alphasort.enabled = false
-	state.alphasort.order = 1
+	state.alphasort.order = 0
 
 	a = app.NewWithID("com.vancise.thelist")
 	a.SetIcon(theme.FyneLogo())
