@@ -56,7 +56,15 @@ func write_json(fullexport bool, fname string) {
 				dialog.ShowError(fmt.Errorf("Failed to marshal list:\n"+err.Error()), w)
 			}
 		} else {
-
+			var items []ListItem
+			for k := range inquiry.LinkageMap {
+				item := lists.Data[state.currentList][inquiry.LinkageMap[k]]
+				items = append(items, item)
+			}
+			buf, err = json.MarshalIndent(items, "", " ")
+			if err != nil {
+				dialog.ShowError(fmt.Errorf("Failed to marshal list:\n"+err.Error()), w)
+			}
 		}
 	} else {
 		buf, err = json.MarshalIndent(lists.ShowData.strlist, "", " ")
