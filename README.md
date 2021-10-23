@@ -18,6 +18,7 @@ This application has been tested and packaged on OSX, where the script included 
 - Add/Remove/Edit/Delete list items
 - Add/Remove/Edit/Delete lists
 - Light/Dark theme support
+- Export lists and filtered results
 
 #### Application File System Structure (OSX)
 ```
