@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"fyne.io/fyne/v2"
 	"fyne.io/fyne/v2/container"
 	"fyne.io/fyne/v2/data/validation"
@@ -46,8 +45,7 @@ func NewExportPop(filetype string) {
 		case "CSV":
 			write_csv(fullexport, fname.Text)
 		case "JSON":
-			//write_json(fullexport)
-			fmt.Println("write json file")
+			write_json(fullexport, fname.Text)
 		}
 	})
 	submit.Disable()

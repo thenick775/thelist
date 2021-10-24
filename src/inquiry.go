@@ -43,10 +43,11 @@ func (l *userList) Initialize() {
 
 	l.List = widget.NewListWithData(l.ShowData.data,
 		func() fyne.CanvasObject {
-			return widget.NewLabel("template")
+			lb := widget.NewLabel("template")
+			lb.Wrapping = fyne.TextTruncate
+			return lb
 		},
 		func(i binding.DataItem, o fyne.CanvasObject) {
-			o.(*widget.Label).Wrapping = fyne.TextTruncate
 			o.(*widget.Label).Bind(i.(binding.String))
 		})
 	l.List.OnSelected = inquiryIndexAndExpand
@@ -273,7 +274,7 @@ func (l *userList) RegexSearch(input string) {
 	inquiryIndexAndExpand(0)
 }
 
-func (l *userList) RemoveElement(key string, index int) {
+func (l *userList) removeElement(key string, index int) {
 	l.Data[key] = append(lists.Data[key][:index], lists.Data[key][index+1:]...)
 }
 

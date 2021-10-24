@@ -10,7 +10,7 @@ import (
 
 func write_conf() {
 	conf_rewrite, err := json.MarshalIndent(conf, "", " ")
-	if err!=nil{
+	if err != nil {
 		dialog.ShowError(fmt.Errorf("Failed to marshal list:\n"+err.Error()), w)
 	}
 	err = ioutil.WriteFile(confLoc, conf_rewrite, 0644)

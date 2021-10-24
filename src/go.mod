@@ -2,7 +2,7 @@ module the-list
 
 go 1.17
 
-require fyne.io/fyne/v2 v2.1.0
+require fyne.io/fyne/v2 v2.1.1
 
 require (
 	github.com/davecgh/go-spew v1.1.1 // indirect
