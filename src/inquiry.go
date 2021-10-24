@@ -288,7 +288,7 @@ func (l *userList) RemoveElementByName(name string) bool {
 	}
 
 	if foundCount == 1 {
-		l.RemoveElement(state.currentList, idx)
+		l.removeElement(state.currentList, idx)
 		return true
 	}
 	return false
