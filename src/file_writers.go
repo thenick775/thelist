@@ -9,8 +9,11 @@ import (
 )
 
 func write_conf() {
-	conf_rewrite, _ := json.MarshalIndent(conf, "", " ")
-	err := ioutil.WriteFile(confLoc, conf_rewrite, 0644)
+	conf_rewrite, err := json.MarshalIndent(conf, "", " ")
+	if err!=nil{
+		dialog.ShowError(fmt.Errorf("Failed to marshal list:\n"+err.Error()), w)
+	}
+	err = ioutil.WriteFile(confLoc, conf_rewrite, 0644)
 	if err != nil {
 		dialog.ShowError(fmt.Errorf("Failed to save configuration"), w)
 	}
