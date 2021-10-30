@@ -34,12 +34,7 @@ func genAddForm(_ fyne.Window) fyne.CanvasObject {
 			{Text: "Tags", Widget: tagentry, HintText: "Enter your tags here to add to list"},
 		},
 		OnCancel: func() {
-			name.SetText("")
-			//name.SetValidationError(nil) //maybe how I want to handle this?
-			rating.SetText("")
-			//rating.SetValidationError(nil)
-			tagentry.SetText("")
-			//tagentry.SetValidationError(nil)
+			tree.OnSelected(state.currentMenuItem)
 		},
 		OnSubmit: func() {
 			if state.noList || state.currentList == "" {
@@ -113,8 +108,7 @@ func genRemove(w fyne.Window) fyne.CanvasObject {
 			{Text: "Name", Widget: name, HintText: "The Name of your Item"},
 		},
 		OnCancel: func() {
-			name.SetText("")
-			//name.SetValidationError(nil)
+			tree.OnSelected(state.currentMenuItem)
 		},
 		OnSubmit: func() {
 			if state.noList || state.currentList == "" {
@@ -346,8 +340,7 @@ func genAddList(_ fyne.Window) fyne.CanvasObject {
 			{Text: "New List", Widget: newList, HintText: "Your new list name"},
 		},
 		OnCancel: func() {
-			newList.SetText("")
-			//newList.SetValidationError(nil)
+			tree.OnSelected(state.currentMenuItem)
 		},
 		OnSubmit: func() {
 			if state.noList {
@@ -409,8 +402,7 @@ func genDeleteList(_ fyne.Window) fyne.CanvasObject {
 			{Text: "Delete List", Widget: delList, HintText: "Your list to delete"},
 		},
 		OnCancel: func() {
-			delList.SetText("")
-			//delList.SetValidationError(nil)
+			tree.OnSelected(state.currentMenuItem)
 		},
 		OnSubmit: func() {
 			if state.noList {
