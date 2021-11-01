@@ -1,11 +1,13 @@
 package main
 
 import (
+	"fmt"
 	"fyne.io/fyne/v2"
+	"fyne.io/fyne/v2/dialog"
 	"fyne.io/fyne/v2/widget"
 )
 
-func menuTree(w fyne.Window, view *fyne.Container, defaultBranch string, defaultSelected string) *widget.Tree {
+func menuTree(w fyne.Window, view *fyne.Container, defaultSelected string) *widget.Tree {
 	listtree := map[string][]string{
 		"":              {"Quick Actions", "My Lists", "Configuration"},
 		"Quick Actions": {"Inquire", "Add", "Remove", "Edit"},
@@ -37,8 +39,31 @@ func menuTree(w fyne.Window, view *fyne.Container, defaultBranch string, default
 		}
 	}
 
-	tree.OpenBranch(defaultBranch)
-	tree.Select(defaultSelected)
+	//get branch to open based on defaultSelected
+	broken := false
+	defaultBranch := ""
+	for key, val := range listtree {
+		if key != "" {
+			for _, item := range val {
+				if item == defaultSelected {
+					broken = true
+					defaultBranch = key
+					break
+				}
+			}
+
+			if broken {
+				break
+			}
+		}
+	}
+
+	if !broken && defaultSelected != "" { // != "" here for case when the configuration is new
+		dialog.ShowError(fmt.Errorf("Invalid Default Selected:\n"+defaultSelected), w)
+	} else if defaultSelected != "" {
+		tree.OpenBranch(defaultBranch)
+		tree.Select(defaultSelected)
+	}
 
 	return tree
 }

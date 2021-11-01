@@ -53,7 +53,6 @@ func main() {
 	}
 
 	defaultSelected := conf["configuration"].(map[string]interface{})["default selected"].(string)
-	defaultBranch := conf["configuration"].(map[string]interface{})["default branches open"].([]interface{})[0].(string)
 	defaultTheme := conf["configuration"].(map[string]interface{})["default theme"].(string)
 	local_item_file := conf["configuration"].(map[string]interface{})["local item file"].(string)
 	state.currentList = conf["configuration"].(map[string]interface{})["default list"].(string)
@@ -88,7 +87,7 @@ func main() {
 	lists.Initialize()
 
 	mainView := container.NewMax() //placeholder that will take up max size of panel
-	tree = menuTree(w, mainView, defaultBranch, defaultSelected)
+	tree = menuTree(w, mainView, defaultSelected)
 
 	//set theme
 	if strings.EqualFold(defaultTheme, "light") {

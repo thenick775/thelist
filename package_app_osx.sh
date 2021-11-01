@@ -19,9 +19,6 @@ else
 	echo "Creating default configuration file at $FILE"
 	echo '{
  "configuration": {
-  "default branches open": [
-   "Quick Actions"
-  ],
   "default list": "",
   "default selected": "Inquire",
   "default theme": "Light",
