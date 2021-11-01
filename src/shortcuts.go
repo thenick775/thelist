@@ -35,7 +35,7 @@ func superSwitchList(shortcut fyne.Shortcut) {
 	tree.Select("Switch List")
 }
 
-func superSwitchListUp() {
+func superSwitchListUp(shortcut fyne.Shortcut) {
 	keys, s := lists.GetOrderedListNames(), ""
 
 	for idx, val := range keys {
@@ -63,7 +63,7 @@ func superSwitchListUp() {
 	}
 }
 
-func superSwitchListDown() {
+func superSwitchListDown(shortcut fyne.Shortcut) {
 	keys, s := lists.GetOrderedListNames(), ""
 
 	for idx, val := range keys {

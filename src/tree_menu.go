@@ -40,8 +40,7 @@ func menuTree(w fyne.Window, view *fyne.Container, defaultSelected string) *widg
 	}
 
 	//get branch to open based on defaultSelected
-	broken := false
-	defaultBranch := ""
+	broken, defaultBranch := false, ""
 	for key, val := range listtree {
 		if key != "" {
 			for _, item := range val {

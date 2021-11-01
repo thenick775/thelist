@@ -119,9 +119,9 @@ func (m *inquiryEntry) TypedShortcut(s fyne.Shortcut) {
 			case fyne.KeyR:
 				superSwitchList(s)
 			case fyne.KeyUp:
-				superSwitchListUp()
+				superSwitchListUp(s)
 			case fyne.KeyDown:
-				superSwitchListDown()
+				superSwitchListDown(s)
 			}
 		}
 	}
