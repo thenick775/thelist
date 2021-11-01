@@ -61,7 +61,7 @@ func genAddForm(_ fyne.Window) fyne.CanvasObject {
 			lists.ListModified = true
 		},
 	}
-	currFormFunc = form.OnSubmit
+	tagentry.currFormFunc = form.OnSubmit
 
 	title := widget.NewLabel("Add")
 	intro := widget.NewLabel("Add items to your list here, use the enter key to submit\n")
@@ -99,7 +99,7 @@ func genRemove(w fyne.Window) fyne.CanvasObject {
 	title := widget.NewLabel("Remove")
 	intro := widget.NewLabel("Enter information of object to be removed\n")
 
-	name := widget.NewEntry()
+	name := NewSubmitEntry()
 	name.SetPlaceHolder("Your Item Name")
 	name.Validator = validation.NewRegexp(`^.+$`, "identifier must not be empty")
 
@@ -143,6 +143,7 @@ func genRemove(w fyne.Window) fyne.CanvasObject {
 			cnf.Show()
 		},
 	}
+	name.currFormFunc = form.OnSubmit
 
 	return container.NewBorder(
 		container.NewVBox(title, widget.NewSeparator(), intro), nil, nil, nil, container.NewPadded(form))
@@ -196,7 +197,7 @@ func genEdit(_ fyne.Window) fyne.CanvasObject {
 			lists.ListModified = true
 		},
 	}
-	currFormFunc = form.OnSubmit
+	tagentry.currFormFunc = form.OnSubmit
 
 	title := widget.NewLabel("Edit")
 	intro := widget.NewLabel("Edit items in your list here, use the enter key to submit\n")
@@ -295,7 +296,7 @@ func genConfEdit(w fyne.Window) fyne.CanvasObject {
 			cnf.Show()
 		},
 	}
-	currFormFunc = form.OnSubmit
+	localItemFile.currFormFunc = form.OnSubmit
 
 	return container.NewBorder(
 		container.NewVBox(title, widget.NewSeparator(), intro), nil, nil, nil, container.NewPadded(form))
@@ -353,7 +354,7 @@ func genAddList(_ fyne.Window) fyne.CanvasObject {
 			newList.SetValidationError(nil)
 		},
 	}
-	currFormFunc = form.OnSubmit
+	newList.currFormFunc = form.OnSubmit
 
 	return container.NewBorder(
 		container.NewVBox(title, widget.NewSeparator(), intro), nil, nil, nil, container.NewPadded(form))
@@ -384,7 +385,7 @@ func genEditList(_ fyne.Window) fyne.CanvasObject {
 			lists.ListModified = true
 		},
 	}
-	currFormFunc = form.OnSubmit
+	newList.currFormFunc = form.OnSubmit
 
 	return container.NewBorder(
 		container.NewVBox(title, widget.NewSeparator(), intro), nil, nil, nil, container.NewPadded(form))

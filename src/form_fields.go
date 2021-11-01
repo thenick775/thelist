@@ -4,9 +4,6 @@ import (
 	"fyne.io/fyne/v2"
 )
 
-//used to associate a current form's last field to its enter key action
-var currFormFunc func()
-
 //entry used to submit with enter key
 func NewSubmitEntry() *submitEntry {
 	entry := &submitEntry{}
@@ -18,7 +15,7 @@ func NewSubmitEntry() *submitEntry {
 func (s *submitEntry) KeyUp(k *fyne.KeyEvent) {
 	switch k.Name {
 	case fyne.KeyReturn:
-		currFormFunc()
+		s.currFormFunc()
 		w.Canvas().Unfocus()
 	}
 }

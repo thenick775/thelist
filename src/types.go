@@ -15,6 +15,7 @@ type MenuPageLink struct {
 //form structures
 type submitEntry struct {
 	widget.Entry
+	currFormFunc func()
 }
 
 //inquiry structures
