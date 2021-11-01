@@ -119,9 +119,9 @@ func (m *inquiryEntry) TypedShortcut(s fyne.Shortcut) {
 			case fyne.KeyR:
 				superSwitchList(s)
 			case fyne.KeyUp:
-				fmt.Println("inquiry control up") //finish here
+				superSwitchListUp()
 			case fyne.KeyDown:
-				fmt.Println("inquiry control down")
+				superSwitchListDown()
 			}
 		}
 	}

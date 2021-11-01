@@ -35,6 +35,62 @@ func superSwitchList(shortcut fyne.Shortcut) {
 	tree.Select("Switch List")
 }
 
+func superSwitchListUp() {
+	keys, s := lists.GetOrderedListNames(), ""
+
+	for idx, val := range keys {
+		if val == state.currentList {
+			if idx-1 >= 0 {
+				s = keys[idx-1]
+				break
+			} else {
+				return
+			}
+		}
+	}
+
+	state.currentList = s
+	lists.SelectEntry.SetText("")
+	if state.alphasort.enabled {
+		lists.GenListFromMap(s)
+		lists.RegexSearch("")
+	} else {
+		lists.ShowData.strlist = lists.GenListFromMap(s)
+		lists.ShowData.data.Reload()
+		lists.SelectEntry.list_loc = 0
+		lists.List.Select(lists.SelectEntry.list_loc)
+		inquiryIndexAndExpand(0)
+	}
+}
+
+func superSwitchListDown() {
+	keys, s := lists.GetOrderedListNames(), ""
+
+	for idx, val := range keys {
+		if val == state.currentList {
+			if idx+1 < len(keys) {
+				s = keys[idx+1]
+				break
+			} else {
+				return
+			}
+		}
+	}
+
+	state.currentList = s
+	lists.SelectEntry.SetText("")
+	if state.alphasort.enabled {
+		lists.GenListFromMap(s)
+		lists.RegexSearch("")
+	} else {
+		lists.ShowData.strlist = lists.GenListFromMap(s)
+		lists.ShowData.data.Reload()
+		lists.SelectEntry.list_loc = 0
+		lists.List.Select(lists.SelectEntry.list_loc)
+		inquiryIndexAndExpand(0)
+	}
+}
+
 func setupDesktopShortcuts(w fyne.Window) {
 	ctrlFind := desktop.CustomShortcut{KeyName: fyne.KeyF, Modifier: desktop.SuperModifier}
 	w.Canvas().AddShortcut(&ctrlFind, superFind)

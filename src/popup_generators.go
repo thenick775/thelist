@@ -18,6 +18,8 @@ func genKeyBoardShortcutPopup() {
 		widget.NewLabel("Super+E -> Open Edit View"),
 		widget.NewLabel("Super+I -> Open Inquiry View"),
 		widget.NewLabel("Super+R -> Open Switch List View"),
+		widget.NewLabel("Super+Up -> Switch List (alphabetically up)"),
+		widget.NewLabel("Super+Down -> Switch List (alphabetically down)"),
 	)))
 	helppop.Resize(fyne.NewSize(210, 275))
 
