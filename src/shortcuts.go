@@ -3,6 +3,7 @@ package main
 import (
 	"fyne.io/fyne/v2"
 	"fyne.io/fyne/v2/driver/desktop"
+	"strconv"
 )
 
 //menu shortcuts
@@ -60,6 +61,7 @@ func superSwitchListUp(shortcut fyne.Shortcut) {
 		lists.SelectEntry.list_loc = 0
 		lists.List.Select(lists.SelectEntry.list_loc)
 		inquiryIndexAndExpand(0)
+		inquiry.InqIntro.SetText("Type your regex query here,\nuse the enter key to filter your list:\n" + state.currentList + ", size: " + strconv.Itoa(len(lists.Data[state.currentList])))
 	}
 }
 
@@ -88,6 +90,7 @@ func superSwitchListDown(shortcut fyne.Shortcut) {
 		lists.SelectEntry.list_loc = 0
 		lists.List.Select(lists.SelectEntry.list_loc)
 		inquiryIndexAndExpand(0)
+		inquiry.InqIntro.SetText("Type your regex query here,\nuse the enter key to filter your list:\n" + state.currentList + ", size: " + strconv.Itoa(len(lists.Data[state.currentList])))
 	}
 }
 
