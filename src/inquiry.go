@@ -233,6 +233,15 @@ func (l *userList) GetOrderedListNames() []string {
 	return keys
 }
 
+func (l *userList) ListExists(listname string) bool {
+	for k := range l.Data {
+		if k == listname {
+			return true
+		}
+	}
+	return false
+}
+
 //regex search, and create linkage to original list datastructure
 func (l *userList) RegexSearch(input string) {
 	rep := regexp.MustCompile("(?im)^.*" + input + `.*$`)
@@ -253,9 +262,10 @@ func (l *userList) RegexSearch(input string) {
 	for idx, v := range res {
 		if val, ok := inquiry.SearchMap[v]; ok {
 			tmplinkage[idx] = val
-			tmp = append(tmp, lists.Data[state.currentList][val].Name)
+			tmp = append(tmp, l.Data[state.currentList][val].Name)
 			rescnt += 1
 		} else {
+			fmt.Println("v: ", v, "idx: ", idx)
 			dialog.ShowError(fmt.Errorf("Results do not match data linkage,\nplease check your regular expression"), w)
 			return
 		}
@@ -263,25 +273,25 @@ func (l *userList) RegexSearch(input string) {
 
 	inquiry.LinkageMap = tmplinkage
 	if input == "" {
-		inquiry.InqIntro.SetText("Type your regex query here,\nuse the enter key to filter your list:\n" + state.currentList + ", size: " + strconv.Itoa(len(lists.Data[state.currentList])))
+		inquiry.InqIntro.SetText("Type your regex query here,\nuse the enter key to filter your list:\n" + state.currentList + ", size: " + strconv.Itoa(len(l.Data[state.currentList])))
 	} else {
 		inquiry.InqIntro.SetText("Querying List: " + state.currentList + ", query: " + input + "\nresult size: " + strconv.Itoa(len(res)))
 	}
-	lists.ShowData.strlist = tmp
-	lists.SelectEntry.list_loc = 0
-	lists.ShowData.data.Reload()
-	lists.List.Select(0) //??why doesnt this call onselected??
+	l.ShowData.strlist = tmp
+	l.SelectEntry.list_loc = 0
+	l.ShowData.data.Reload()
+	l.List.Select(0) //??why doesnt this call onselected??
 	inquiryIndexAndExpand(0)
 }
 
 func (l *userList) removeElement(key string, index int) {
-	l.Data[key] = append(lists.Data[key][:index], lists.Data[key][index+1:]...)
+	l.Data[key] = append(l.Data[key][:index], l.Data[key][index+1:]...)
 }
 
 func (l *userList) RemoveElementByName(name string) bool {
 	foundCount, idx := 0, 0
-	for i := range lists.Data[state.currentList] {
-		if lists.Data[state.currentList][i].Name == name {
+	for i := range l.Data[state.currentList] {
+		if l.Data[state.currentList][i].Name == name {
 			foundCount += 1
 			idx = i
 		}

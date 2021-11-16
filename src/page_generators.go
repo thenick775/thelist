@@ -44,9 +44,9 @@ func genAddForm(_ fyne.Window) fyne.CanvasObject {
 			intVar, _ := strconv.Atoi(rating.Text)
 			lists.Data[state.currentList] = append(lists.Data[state.currentList], ListItem{Name: name.Text, Rating: intVar, Tags: tagentry.Text})
 			inquiry.FilterList += fmt.Sprintf("\n%s %s %s", name.Text, rating.Text, tagentry.Text)
+			f := fmt.Sprintf("%s %s %s", name.Text, rating.Text, tagentry.Text)
+			inquiry.SearchMap[f] = len(lists.Data[state.currentList]) - 1
 			if inquiry.LinkageMap != nil { //refresh the linkage map/search map
-				f := fmt.Sprintf("%s %s %s", name.Text, rating.Text, tagentry.Text)
-				inquiry.SearchMap[f] = len(lists.Data[state.currentList]) - 1
 				lists.RegexSearch(lists.SelectEntry.Text)
 			} else { //append shown data to existing baselist
 				lists.ShowData.strlist = append(lists.ShowData.strlist, name.Text)
@@ -212,7 +212,7 @@ func genConfEdit(w fyne.Window) fyne.CanvasObject {
 	intro := widget.NewLabel("View and Edit your local Configuration\n")
 
 	defaultList := widget.NewEntry()
-	defaultList.SetText(state.currentList)
+	defaultList.SetText(conf["configuration"].(map[string]interface{})["default selected"].(string))
 	defaultSelected := widget.NewEntry()
 	defaultSelected.SetText(conf["configuration"].(map[string]interface{})["default selected"].(string))
 	defaultTheme := widget.NewSelectEntry([]string{"Light", "Dark"})
@@ -229,12 +229,17 @@ func genConfEdit(w fyne.Window) fyne.CanvasObject {
 			{Text: "Default Local Item File", Widget: localItemFile, HintText: "Absolute Location of your item list file"},
 		},
 		OnCancel: func() {
-			fmt.Println("Cancelled")
+			defaultList.SetText(conf["configuration"].(map[string]interface{})["default selected"].(string))
+			defaultSelected.SetText(conf["configuration"].(map[string]interface{})["default selected"].(string))
+			defaultTheme.SetText(conf["configuration"].(map[string]interface{})["default theme"].(string))
+			localItemFile.SetText(conf["configuration"].(map[string]interface{})["local item file"].(string))
 		},
 		OnSubmit: func() {
 			cnf := dialog.NewConfirm("Confirmation", "Are you sure you want to edit your configuration?", func(response bool) {
 				if response {
-					conf["configuration"].(map[string]interface{})["default selected"] = defaultSelected.Text
+					if lists.ListExists(defaultSelected.Text) {
+						conf["configuration"].(map[string]interface{})["default selected"] = defaultSelected.Text
+					}
 
 					if defaultList.Text != conf["configuration"].(map[string]interface{})["default list"].(string) {
 						conf["configuration"].(map[string]interface{})["default list"] = defaultList.Text
