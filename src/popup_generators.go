@@ -14,6 +14,7 @@ func genKeyBoardShortcutPopup() {
 		widget.NewLabel("Keyboard Shortcuts"),
 		widget.NewSeparator(),
 		widget.NewLabel("Super+F -> Focus on Inquiry Input Field"),
+		widget.NewLabel("Super+B -> Clear the Inquiry Input Field"),
 		widget.NewLabel("Super+G -> Open Add View"),
 		widget.NewLabel("Super+E -> Open Edit View"),
 		widget.NewLabel("Super+I -> Open Inquiry View"),

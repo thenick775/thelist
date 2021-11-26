@@ -118,6 +118,8 @@ func (m *inquiryEntry) TypedShortcut(s fyne.Shortcut) {
 				superInquire(s)
 			case fyne.KeyR:
 				superSwitchList(s)
+			case fyne.KeyB:
+				superClearInquiry(s)
 			case fyne.KeyUp:
 				superSwitchListUp(s)
 			case fyne.KeyDown:
