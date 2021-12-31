@@ -109,6 +109,10 @@ func setupDesktopShortcuts(w fyne.Window) {
 	w.Canvas().AddShortcut(&ctrlInquire, superInquire)
 	ctrlSwitchList := desktop.CustomShortcut{KeyName: fyne.KeyR, Modifier: desktop.SuperModifier}
 	w.Canvas().AddShortcut(&ctrlSwitchList, superSwitchList)
+	ctrlSwitchListUp := desktop.CustomShortcut{KeyName: fyne.KeyUp, Modifier: desktop.SuperModifier}
+	w.Canvas().AddShortcut(&ctrlSwitchListUp, superSwitchListUp)
+	ctrlSwitchListDown := desktop.CustomShortcut{KeyName: fyne.KeyDown, Modifier: desktop.SuperModifier}
+	w.Canvas().AddShortcut(&ctrlSwitchListDown, superSwitchListDown)
 	ctrlClearInquiry := desktop.CustomShortcut{KeyName: fyne.KeyB, Modifier: desktop.SuperModifier}
 	w.Canvas().AddShortcut(&ctrlClearInquiry, superClearInquiry)
 }
