@@ -212,7 +212,7 @@ func genConfEdit(w fyne.Window) fyne.CanvasObject {
 	intro := widget.NewLabel("View and Edit your local Configuration\n")
 
 	defaultList := widget.NewEntry()
-	defaultList.SetText(conf["configuration"].(map[string]interface{})["default selected"].(string))
+	defaultList.SetText(conf["configuration"].(map[string]interface{})["default list"].(string))
 	defaultSelected := widget.NewEntry()
 	defaultSelected.SetText(conf["configuration"].(map[string]interface{})["default selected"].(string))
 	defaultTheme := widget.NewSelectEntry([]string{"Light", "Dark"})
@@ -229,7 +229,7 @@ func genConfEdit(w fyne.Window) fyne.CanvasObject {
 			{Text: "Default Local Item File", Widget: localItemFile, HintText: "Absolute Location of your item list file"},
 		},
 		OnCancel: func() {
-			defaultList.SetText(conf["configuration"].(map[string]interface{})["default selected"].(string))
+			defaultList.SetText(conf["configuration"].(map[string]interface{})["default list"].(string))
 			defaultSelected.SetText(conf["configuration"].(map[string]interface{})["default selected"].(string))
 			defaultTheme.SetText(conf["configuration"].(map[string]interface{})["default theme"].(string))
 			localItemFile.SetText(conf["configuration"].(map[string]interface{})["local item file"].(string))
@@ -237,12 +237,12 @@ func genConfEdit(w fyne.Window) fyne.CanvasObject {
 		OnSubmit: func() {
 			cnf := dialog.NewConfirm("Confirmation", "Are you sure you want to edit your configuration?", func(response bool) {
 				if response {
-					if lists.ListExists(defaultSelected.Text) {
-						conf["configuration"].(map[string]interface{})["default selected"] = defaultSelected.Text
+					if lists.ListExists(defaultList.Text) { //need to fix this
+						conf["configuration"].(map[string]interface{})["default list"] = defaultList.Text
 					}
 
-					if defaultList.Text != conf["configuration"].(map[string]interface{})["default list"].(string) {
-						conf["configuration"].(map[string]interface{})["default list"] = defaultList.Text
+					if defaultSelected.Text != conf["configuration"].(map[string]interface{})["default selected"].(string) {
+						conf["configuration"].(map[string]interface{})["default selected"] = defaultSelected.Text
 					}
 
 					if defaultTheme.Text != conf["configuration"].(map[string]interface{})["default theme"] {
