@@ -66,3 +66,15 @@ func menuTree(w fyne.Window, view *fyne.Container, defaultSelected string) *widg
 
 	return tree
 }
+
+func isMenuTreeLeaf(node_name string) bool {
+	branchUIDs := tree.ChildUIDs("") //level 1, internal branches
+	for _, branch := range branchUIDs {
+		for _, leaf := range tree.ChildUIDs(branch) {
+			if node_name == leaf {
+				return true
+			}
+		}
+	}
+	return false
+}

@@ -237,11 +237,11 @@ func genConfEdit(w fyne.Window) fyne.CanvasObject {
 		OnSubmit: func() {
 			cnf := dialog.NewConfirm("Confirmation", "Are you sure you want to edit your configuration?", func(response bool) {
 				if response {
-					if lists.ListExists(defaultList.Text) { //need to fix this
+					if lists.ListExists(defaultList.Text) {
 						conf["configuration"].(map[string]interface{})["default list"] = defaultList.Text
 					}
 
-					if defaultSelected.Text != conf["configuration"].(map[string]interface{})["default selected"].(string) {
+					if isMenuTreeLeaf(defaultSelected.Text) {
 						conf["configuration"].(map[string]interface{})["default selected"] = defaultSelected.Text
 					}
 
