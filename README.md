@@ -11,6 +11,8 @@ This is the currnt version of this software, the terminal TUI utility was retire
 
 This application has been tested and packaged on OSX, where the script included places the configuration file next to the executable.
 
+Note: This appplication was featured in the [fyne showcase](https://apps.fyne.io/apps/com.vancise.TheList.html)!
+
 #### Features
 - Search list items by regular expression
 - Support for multiple lists
