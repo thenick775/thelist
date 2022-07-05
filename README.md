@@ -38,4 +38,4 @@ Note: This appplication was featured in the [fyne showcase](https://apps.fyne.io
 
 #### Demo
 
-![](demo_fyne_v1.gif)
+![](demo_fyne_v2.gif)
