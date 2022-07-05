@@ -21,6 +21,8 @@ Note: This appplication was featured in the [fyne showcase](https://apps.fyne.io
 - Add/Remove/Edit/Delete lists
 - Light/Dark theme support
 - Export lists and filtered results
+- Keyboard shortcuts
+- Basic list statistics
 
 #### Application File System Structure (OSX)
 ```
