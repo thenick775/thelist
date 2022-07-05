@@ -5,6 +5,7 @@ import (
 	"fyne.io/fyne/v2/container"
 	"fyne.io/fyne/v2/data/binding"
 	"fyne.io/fyne/v2/widget"
+	"image/color"
 )
 
 //misc structures
@@ -43,6 +44,12 @@ type userList struct {
 	ListModified bool
 }
 
+type ListsSummary struct {
+	Name                  string
+	TotalContentCount     int
+	ContentCountPerRating map[int]int
+}
+
 type Inquiry struct {
 	FilterList        string
 	SearchMap         map[string]int
@@ -58,13 +65,32 @@ type Inquiry struct {
 
 //application state structures
 type AppState struct {
-	currentList     string
-	currentMenuItem string
-	noList          bool
-	alphasort       AlphaSort
+	currentList       string
+	currentMenuItem   string
+	noList            bool
+	alphasort         AlphaSort
+	currentThemeAlias string
 }
 
 type AlphaSort struct {
 	enabled bool
 	order   int //0 asc, 1 desc
+}
+
+//Default Word Cloud Configuration
+type ConfImg struct {
+	FontMaxSize     int          `json:"font_max_size"`
+	FontMinSize     int          `json:"font_min_size"`
+	RandomPlacement bool         `json:"random_placement"`
+	FontFile        string       `json:"font_file"`
+	Colors          []color.RGBA `json:"colors"`
+	BackgroundColor color.RGBA   `yaml:"background_color"`
+	Width           int          `json:"width"`
+	Height          int          `json:"height"`
+	Mask            MaskConf     `json:"mask"`
+}
+
+type MaskConf struct {
+	File  string     `json:"file"`
+	Color color.RGBA `json:"color"`
 }

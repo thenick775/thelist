@@ -24,11 +24,13 @@ Note: This appplication was featured in the [fyne showcase](https://apps.fyne.io
 
 #### Application File System Structure (OSX)
 ```
-TheList.app
+./TheList.app
 └── Contents
     ├── Info.plist
     ├── MacOS
     │   ├── conf.json
+    │   ├── fonts
+    │   │   └── *.ttf
     │   └── the-list
     └── Resources
         └── icon.icns

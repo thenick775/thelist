@@ -12,6 +12,9 @@ else
    exit 1
 fi
 
+echo "Copying fonts to executable dir..."
+cp -r ./fonts ./$appname.app/Contents/MacOS/
+
 FILE=./$appname.app/Contents/MacOS/conf.json
 if [[ -f "$FILE" ]]; then
     echo "$FILE configuration file exists."
@@ -21,7 +24,7 @@ else
  "configuration": {
   "default list": "",
   "default selected": "Inquire",
-  "default theme": "Light",
+  "default theme": "Dark",
   "local item file": ""
  }
 }' > $FILE

@@ -25,6 +25,7 @@ var (
 	a       fyne.App
 	tree    *widget.Tree
 	confLoc = filepath.FromSlash("/conf.json") //required conf location, appended to executable location
+	fontLoc string                             //location of fonts used in word cloud rendering
 )
 
 func main() {
@@ -36,6 +37,8 @@ func main() {
 	execupath := filepath.Dir(path)
 	confLoc = execupath + confLoc //append configuration location to executable path (in same dir)
 	fmt.Println("conf loc:", confLoc)
+	fontLoc = execupath + "/fonts"
+	fmt.Println("font loc:", fontLoc)
 
 	//get configuration
 	conf = make(map[string]interface{})
@@ -59,6 +62,7 @@ func main() {
 	state.noList = false
 	state.alphasort.enabled = false
 	state.alphasort.order = 0
+	state.currentThemeAlias = defaultTheme
 
 	a = app.NewWithID("com.vancise.thelist")
 	a.SetIcon(theme.FyneLogo())

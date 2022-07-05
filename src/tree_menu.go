@@ -9,9 +9,10 @@ import (
 
 func menuTree(w fyne.Window, view *fyne.Container, defaultSelected string) *widget.Tree {
 	listtree := map[string][]string{
-		"":              {"Quick Actions", "My Lists", "Configuration"},
+		"":              {"Quick Actions", "My Lists", "Analytics", "Configuration"},
 		"Quick Actions": {"Inquire", "Add", "Remove", "Edit"},
 		"My Lists":      {"Switch List", "Add List", "Delete List", "Edit List"},
+		"Analytics":     {"Word Cloud", "Statistics"},
 		"Configuration": {"Defaults"},
 	}
 
@@ -25,6 +26,8 @@ func menuTree(w fyne.Window, view *fyne.Container, defaultSelected string) *widg
 		"Add List":    MenuPageLink{View: genAddList},
 		"Edit List":   MenuPageLink{View: genEditList},
 		"Delete List": MenuPageLink{View: genDeleteList},
+		"Word Cloud":  MenuPageLink{View: genWordCloud},
+		"Statistics":  MenuPageLink{View: genStatistics},
 	}
 
 	tree := widget.NewTreeWithStrings(listtree)

@@ -103,9 +103,11 @@ func setupSystemMenu(w fyne.Window, a fyne.App) {
 	themeMenu := fyne.NewMenu("Theme",
 		fyne.NewMenuItem("Dark", func() {
 			a.Settings().SetTheme(theme.DarkTheme())
+			state.currentThemeAlias = "dark"
 		}),
 		fyne.NewMenuItem("Light", func() {
 			a.Settings().SetTheme(theme.LightTheme())
+			state.currentThemeAlias = "light"
 		}))
 
 	sortItem := fyne.NewMenuItem("Sort", nil)

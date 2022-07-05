@@ -4,13 +4,17 @@ import (
 	"encoding/json"
 	"fmt"
 	"fyne.io/fyne/v2"
+	"fyne.io/fyne/v2/canvas"
 	"fyne.io/fyne/v2/container"
+	"fyne.io/fyne/v2/data/binding"
 	"fyne.io/fyne/v2/data/validation"
 	"fyne.io/fyne/v2/dialog"
 	"fyne.io/fyne/v2/theme"
 	"fyne.io/fyne/v2/widget"
+	"image"
 	"io/ioutil"
 	"os"
+	"sort"
 	"strconv"
 	"strings"
 )
@@ -249,9 +253,11 @@ func genConfEdit(w fyne.Window) fyne.CanvasObject {
 						if strings.EqualFold(defaultTheme.Text, "light") {
 							a.Settings().SetTheme(theme.LightTheme())
 							conf["configuration"].(map[string]interface{})["default theme"] = defaultTheme.Text
+							state.currentThemeAlias = defaultTheme.Text
 						} else if strings.EqualFold(defaultTheme.Text, "dark") {
 							a.Settings().SetTheme(theme.DarkTheme())
 							conf["configuration"].(map[string]interface{})["default theme"] = defaultTheme.Text
+							state.currentThemeAlias = defaultTheme.Text
 						}
 					}
 
@@ -444,4 +450,94 @@ func genDeleteList(_ fyne.Window) fyne.CanvasObject {
 
 	return container.NewBorder(
 		container.NewVBox(title, widget.NewSeparator(), intro), nil, nil, nil, container.NewPadded(form))
+}
+
+func genWordCloud(_ fyne.Window) fyne.CanvasObject {
+	title := widget.NewLabel("Word Cloud (Loading)")
+	img := image.NewRGBA(image.Rectangle{image.Point{0, 0}, image.Point{1, 1}}) //dummy image
+
+	image := canvas.NewImageFromImage(img)
+	image.FillMode = canvas.ImageFillContain
+
+	internalBreakdownList := []string{} //dummy data list
+	breakdownShowList := binding.BindStringList(
+		&internalBreakdownList,
+	)
+
+	dataBreakdown := widget.NewListWithData(breakdownShowList,
+		func() fyne.CanvasObject {
+			lb := widget.NewLabel("template")
+			lb.Wrapping = fyne.TextTruncate
+			return lb
+		},
+		func(i binding.DataItem, o fyne.CanvasObject) {
+			o.(*widget.Label).Bind(i.(binding.String))
+		})
+
+	wordCloudTabs := container.NewAppTabs(
+		container.NewTabItem("Cloud", container.NewPadded(image)),
+		container.NewTabItem("Data", container.NewVScroll(dataBreakdown)),
+	)
+
+	go func() { //async image processing/rendering+data processing
+		//gen image and retreive data
+		g_img, g_data := genWordCloudImg()
+		image.Image = g_img
+		title.SetText("Word Cloud")
+		title.Refresh()
+		image.Refresh()
+
+		sortedBreakdownKeys := make([]string, 0, len(g_data))
+		for k := range g_data {
+			sortedBreakdownKeys = append(sortedBreakdownKeys, k)
+		}
+		sort.SliceStable(sortedBreakdownKeys, func(i, j int) bool { //sort keys by value desc
+			return g_data[sortedBreakdownKeys[i]] > g_data[sortedBreakdownKeys[j]]
+		})
+
+		for _, val := range sortedBreakdownKeys {
+			internalBreakdownList = append(internalBreakdownList, "Word: "+val+", Count: "+strconv.Itoa(g_data[val]))
+		}
+		breakdownShowList.Reload()
+	}()
+
+	return container.NewBorder(
+		container.NewVBox(title, widget.NewSeparator()), nil, nil, nil, wordCloudTabs)
+}
+
+func genStatistics(_ fyne.Window) fyne.CanvasObject {
+	title := widget.NewLabel("Statistics")
+	stats := genStats()
+	totalLists := len(stats)
+
+	//generate markdown
+	mk_down := `## Total Lists: ` + strconv.Itoa(totalLists)
+	for idx, stat := range stats {
+		mk_down += `
+---
+## List #` + strconv.Itoa(idx+1) + `: ` + stat.Name + `
+
+---
+Total Items: ` + strconv.Itoa(stat.TotalContentCount) + `
+
+Ratings Count:
+
+`
+		//display ratings in descending order
+		sortedRatings := make([]int, 0, len(stat.ContentCountPerRating))
+		for k := range stat.ContentCountPerRating {
+			sortedRatings = append(sortedRatings, k)
+		}
+		sort.Sort(sort.Reverse(sort.IntSlice(sortedRatings)))
+
+		for _, key := range sortedRatings {
+			mk_down += `
+* Rating: ` + strconv.Itoa(key) + `, Count: ` + strconv.Itoa(stat.ContentCountPerRating[key])
+		}
+	}
+	//end markdown generation
+	rich := widget.NewRichTextFromMarkdown(mk_down)
+
+	return container.NewBorder(
+		container.NewVBox(title, widget.NewSeparator()), nil, nil, nil, container.NewVScroll(rich))
 }
