@@ -474,8 +474,14 @@ func genWordCloud(_ fyne.Window) fyne.CanvasObject {
 			o.(*widget.Label).Bind(i.(binding.String))
 		})
 
+	exportButton := widget.NewButtonWithIcon("", theme.ContentCopyIcon(), func() {
+		NewImgExportPop(image.Image)
+	})
+
+	imgHolder := container.NewBorder(nil, nil, container.NewVBox(exportButton), nil, image)
+
 	wordCloudTabs := container.NewAppTabs(
-		container.NewTabItem("Cloud", container.NewPadded(image)),
+		container.NewTabItem("Cloud", imgHolder),
 		container.NewTabItem("Data", container.NewVScroll(dataBreakdown)),
 	)
 

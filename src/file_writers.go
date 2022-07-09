@@ -4,7 +4,10 @@ import (
 	"encoding/json"
 	"fmt"
 	"fyne.io/fyne/v2/dialog"
+	"image"
+	"image/png"
 	"io/ioutil"
+	"os"
 	"strconv"
 )
 
@@ -79,5 +82,17 @@ func write_json(fullexport bool, fname string) {
 	err = ioutil.WriteFile(fname, buf, 0644)
 	if err != nil {
 		dialog.ShowError(fmt.Errorf("Failed to create export file:\n"+err.Error()), w)
+	}
+}
+
+func write_png(img image.Image, fname string) {
+	f, err := os.Create(fname)
+	if err != nil {
+		dialog.ShowError(fmt.Errorf("Failed to open save file:\n"+err.Error()), w)
+	} else {
+		defer f.Close()
+		if err = png.Encode(f, img); err != nil {
+			dialog.ShowError(fmt.Errorf("Failed to encode file:\n"+err.Error()), w)
+		}
 	}
 }

@@ -6,6 +6,7 @@ import (
 	"fyne.io/fyne/v2/data/validation"
 	"fyne.io/fyne/v2/driver/desktop"
 	"fyne.io/fyne/v2/widget"
+	"image"
 )
 
 func genKeyBoardShortcutPopup() {
@@ -70,6 +71,44 @@ func NewExportPop(filetype string) {
 		container.NewHBox(submit, cancel),
 	)))
 	exp.Resize(fyne.NewSize(400, 150))
+
+	if deskCanvas, ok := exp.Canvas().(desktop.Canvas); ok {
+		deskCanvas.SetOnKeyDown(func(key *fyne.KeyEvent) {
+			if key.Name == fyne.KeyEscape {
+				exp.Close()
+			}
+		})
+	}
+	exp.Show()
+}
+
+//used for exporting of word cloud images
+func NewImgExportPop(img image.Image) {
+	exp := a.NewWindow("Export Image")
+	cancel := widget.NewButton("Cancel", func() {
+		exp.Close()
+	})
+	fname := widget.NewEntry()
+	fname.SetPlaceHolder("File name")
+	submit := widget.NewButton("Submit", func() {
+		write_png(img, fname.Text)
+		exp.Close()
+	})
+	submit.Disable()
+	fname.Validator = validation.NewRegexp(`^.+\.png$`, ".png file name cannot be empty")
+	fname.SetOnValidationChanged(func(err error) {
+		if err != nil {
+			submit.Disable()
+		} else {
+			submit.Enable()
+		}
+	})
+
+	exp.SetContent(container.NewVScroll(container.NewVBox(
+		fname,
+		container.NewHBox(submit, cancel),
+	)))
+	exp.Resize(fyne.NewSize(400, 90))
 
 	if deskCanvas, ok := exp.Canvas().(desktop.Canvas); ok {
 		deskCanvas.SetOnKeyDown(func(key *fyne.KeyEvent) {
