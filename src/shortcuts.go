@@ -6,14 +6,14 @@ import (
 	"strconv"
 )
 
-//menu shortcuts
+// menu shortcuts
 func shortcutFocused(s fyne.Shortcut, w fyne.Window) {
 	if focused, ok := w.Canvas().Focused().(fyne.Shortcutable); ok {
 		focused.TypedShortcut(s)
 	}
 }
 
-//shared shortcuts below
+// shared shortcuts below
 func superFind(shortcut fyne.Shortcut) {
 	if state.currentMenuItem == "Inquire" {
 		w.Canvas().Focus(lists.SelectEntry) //maybe need unfocus somewhere?

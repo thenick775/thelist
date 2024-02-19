@@ -35,7 +35,7 @@ func genKeyBoardShortcutPopup() {
 	helppop.Show()
 }
 
-//used for export to csv and to json
+// used for export to csv and to json
 func NewExportPop(filetype string) {
 	exp := a.NewWindow("Export " + filetype)
 	fullexport := false
@@ -82,7 +82,7 @@ func NewExportPop(filetype string) {
 	exp.Show()
 }
 
-//used for exporting of word cloud images
+// used for exporting of word cloud images
 func NewImgExportPop(img image.Image) {
 	exp := a.NewWindow("Export Image")
 	cancel := widget.NewButton("Cancel", func() {

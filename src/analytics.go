@@ -1,10 +1,11 @@
 package main
 
 import (
-	"github.com/psykhi/wordclouds" //=> replaced with github.com/thenick775/wordclouds
 	"image"
 	"image/color"
 	"strings"
+
+	"github.com/psykhi/wordclouds" //=> replaced with github.com/thenick775/wordclouds
 )
 
 var lightModeColors = []color.RGBA{
@@ -44,7 +45,7 @@ var defaultConfImg = ConfImg{
 	}},
 }
 
-//generate image object containing word cloud
+// generate image object containing word cloud
 func genWordCloudImg() (image.Image, map[string]int) {
 	confImg := defaultConfImg
 	confImg.FontFile = fontLoc + confImg.FontFile

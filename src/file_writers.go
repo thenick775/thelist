@@ -3,12 +3,12 @@ package main
 import (
 	"encoding/json"
 	"fmt"
-	"fyne.io/fyne/v2/dialog"
 	"image"
 	"image/png"
-	"io/ioutil"
 	"os"
 	"strconv"
+
+	"fyne.io/fyne/v2/dialog"
 )
 
 func write_conf() {
@@ -16,7 +16,7 @@ func write_conf() {
 	if err != nil {
 		dialog.ShowError(fmt.Errorf("Failed to marshal list:\n"+err.Error()), w)
 	}
-	err = ioutil.WriteFile(confLoc, conf_rewrite, 0644)
+	err = os.WriteFile(confLoc, conf_rewrite, 0644)
 	if err != nil {
 		dialog.ShowError(fmt.Errorf("Failed to save configuration"), w)
 	}
@@ -44,7 +44,7 @@ func write_csv(fullexport bool, fname string) {
 		}
 	}
 
-	err := ioutil.WriteFile(fname, []byte(buf), 0644)
+	err := os.WriteFile(fname, []byte(buf), 0644)
 	if err != nil {
 		dialog.ShowError(fmt.Errorf("Failed to create export file:\n"+err.Error()), w)
 	}
@@ -79,7 +79,7 @@ func write_json(fullexport bool, fname string) {
 		}
 	}
 
-	err = ioutil.WriteFile(fname, buf, 0644)
+	err = os.WriteFile(fname, buf, 0644)
 	if err != nil {
 		dialog.ShowError(fmt.Errorf("Failed to create export file:\n"+err.Error()), w)
 	}
