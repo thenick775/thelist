@@ -96,6 +96,10 @@ func (i *inquiryEntry) KeyDown(key *fyne.KeyEvent) {
 		inquiry.InquiryTabs.SelectIndex(0)
 	case fyne.KeyRight: //for inquiry detail
 		inquiry.InquiryTabs.SelectIndex(1)
+	case fyne.KeyPageDown:
+		lists.List.ScrollToBottom()
+	case fyne.KeyPageUp:
+		lists.List.ScrollToTop()
 	case fyne.KeyEscape: //for inquiry escape focused
 		w.Close()
 	}
@@ -156,6 +160,10 @@ func deskdown(key *fyne.KeyEvent) {
 			inquiry.InquiryTabs.SelectIndex(0)
 		case fyne.KeyRight: //for inquiry detail
 			inquiry.InquiryTabs.SelectIndex(1)
+		case fyne.KeyPageDown:
+			lists.List.ScrollToBottom()
+		case fyne.KeyPageUp:
+			lists.List.ScrollToTop()
 		case fyne.KeyEscape: //for inquiry escape (unfocused)
 			w.Close()
 		}
