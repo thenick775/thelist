@@ -69,6 +69,7 @@ func newInquiryEntry() *inquiryEntry {
 
 // inquiry specific key handlers
 func (i *inquiryEntry) KeyDown(key *fyne.KeyEvent) {
+	fmt.Println("vancise in inquiry keydown")
 	switch key.Name {
 	case fyne.KeyReturn:
 		if i.Text == "" && !state.alphasort.enabled {
@@ -112,8 +113,8 @@ func (m *inquiryEntry) TypedShortcut(s fyne.Shortcut) {
 	} else if ok {
 		t := s.(*desktop.CustomShortcut)
 		fmt.Println("shortcut name:", s.ShortcutName(), s.(*desktop.CustomShortcut).KeyName, s.(*desktop.CustomShortcut).Modifier)
-		fmt.Println(desktop.SuperModifier)
-		if t.Modifier == desktop.SuperModifier {
+		fmt.Println(fyne.KeyModifierSuper)
+		if t.Modifier == fyne.KeyModifierSuper {
 			switch t.KeyName {
 			case fyne.KeyG:
 				superAdd(s)
@@ -146,6 +147,7 @@ func (e *inquiryEntry) KeyUp(key *fyne.KeyEvent) {
 // these are global keyhandlers attatched to the desktop window
 // they work in conjunction with the inquiry specific key handlers
 func deskdown(key *fyne.KeyEvent) {
+	fmt.Println("vancise in deskdown")
 	if state.currentMenuItem == "Inquire" { //for inquiry
 		switch key.Name {
 		case fyne.KeyDown: //for inquiry list navigation
@@ -317,6 +319,7 @@ func (l *userList) RemoveElementByName(name string) bool {
 
 // inquiry list item selection behavior
 func inquiryIndexAndExpand(index int) {
+	fmt.Println("vancise in inquiryIndexAndExpand:", index)
 	if index < 0 {
 		index = 0
 	} else if index > lists.List.Length()-1 {
