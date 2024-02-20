@@ -334,4 +334,6 @@ func inquiryIndexAndExpand(index int) {
 	inquiry.ExpandL1.SetText("Name: \n" + item.Name)
 	inquiry.ExpandL2.SetText("Rating: \n" + strconv.Itoa(item.Rating))
 	inquiry.ExpandL3.SetText("Tags: \n" + item.Tags)
+	// reset focus since we favor keyboard navigation of the list
+	w.Canvas().Focus(lists.SelectEntry)
 }
