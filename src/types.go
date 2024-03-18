@@ -1,25 +1,26 @@
 package main
 
 import (
+	"image/color"
+
 	"fyne.io/fyne/v2"
 	"fyne.io/fyne/v2/container"
 	"fyne.io/fyne/v2/data/binding"
 	"fyne.io/fyne/v2/widget"
-	"image/color"
 )
 
-//misc structures
+// misc structures
 type MenuPageLink struct {
 	View func(w fyne.Window) fyne.CanvasObject
 }
 
-//form structures
+// form structures
 type submitEntry struct {
 	widget.Entry
 	currFormFunc func()
 }
 
-//inquiry structures
+// inquiry structures
 type inquiryEntry struct {
 	widget.Entry
 	list_loc int //move this to the listdata struct??
@@ -63,7 +64,7 @@ type Inquiry struct {
 	InqIntro          *widget.Label
 }
 
-//application state structures
+// application state structures
 type AppState struct {
 	currentList       string
 	currentMenuItem   string
@@ -77,7 +78,7 @@ type AlphaSort struct {
 	order   int //0 asc, 1 desc
 }
 
-//Default Word Cloud Configuration
+// Default Word Cloud Configuration
 type ConfImg struct {
 	FontMaxSize     int          `json:"font_max_size"`
 	FontMinSize     int          `json:"font_min_size"`

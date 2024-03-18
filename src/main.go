@@ -3,6 +3,10 @@ package main
 import (
 	"encoding/json"
 	"fmt"
+	"os"
+	"path/filepath"
+	"strings"
+
 	"fyne.io/fyne/v2"
 	"fyne.io/fyne/v2/app"
 	"fyne.io/fyne/v2/container"
@@ -10,10 +14,6 @@ import (
 	"fyne.io/fyne/v2/driver/desktop"
 	"fyne.io/fyne/v2/theme"
 	"fyne.io/fyne/v2/widget"
-	"io/ioutil"
-	"os"
-	"path/filepath"
-	"strings"
 )
 
 var (
@@ -24,26 +24,26 @@ var (
 	w       fyne.Window
 	a       fyne.App
 	tree    *widget.Tree
-	confLoc = filepath.FromSlash("/conf.json") //required conf location, appended to executable location
-	fontLoc string                             //location of fonts used in word cloud rendering
+	confLoc = filepath.FromSlash("/conf.json") // required conf location, appended to executable location
+	fontLoc string                             // location of fonts used in word cloud rendering
 )
 
 func main() {
-	path, err := os.Executable() //get path of current executable
+	path, err := os.Executable() // get path of current executable
 	if err != nil {
 		panic(err)
 	}
 	fmt.Println("execu path: ", path)
 	execupath := filepath.Dir(path)
-	confLoc = execupath + confLoc //append configuration location to executable path (in same dir)
+	confLoc = execupath + confLoc // append configuration location to executable path (in same dir)
 	fmt.Println("conf loc:", confLoc)
 	fontLoc = execupath + "/fonts"
 	fmt.Println("font loc:", fontLoc)
 
-	//get configuration
+	// get configuration
 	conf = make(map[string]interface{})
-	//read configuration file
-	conf_file, err := ioutil.ReadFile(confLoc)
+	// read configuration file
+	conf_file, err := os.ReadFile(confLoc)
 	if err != nil {
 		panic(err)
 	}
@@ -52,7 +52,6 @@ func main() {
 	err = json.Unmarshal(conf_file, &conf)
 	if err != nil {
 		panic("config err:" + err.Error())
-		return
 	}
 
 	defaultSelected := conf["configuration"].(map[string]interface{})["default selected"].(string)
@@ -64,14 +63,13 @@ func main() {
 	state.alphasort.order = 0
 	state.currentThemeAlias = defaultTheme
 
-	a = app.NewWithID("com.vancise.thelist")
-	a.SetIcon(theme.FyneLogo())
+	a = app.New()
 	w = a.NewWindow("TheList Utility")
-	//setup app tree menu
+	// setup app tree menu
 	setupSystemMenu(w, a)
-	//decode list data
-	if local_item_file != "" { //how to handle this situation for users??
-		byteValue, err := ioutil.ReadFile(local_item_file)
+	// decode list data
+	if local_item_file != "" { // how to handle this situation for users??
+		byteValue, err := os.ReadFile(local_item_file)
 		if err != nil {
 			fmt.Println("local item error")
 			panic(err)
@@ -86,14 +84,14 @@ func main() {
 		lists.Data = make(map[string][]ListItem)
 	}
 
-	//intialize lists and inquiry
+	// intialize lists and inquiry
 	inquiry.Initialize()
 	lists.Initialize()
 
-	mainView := container.NewMax() //placeholder that will take up max size of panel
+	mainView := container.NewStack() // placeholder that will take up max size of panel
 	tree = menuTree(w, mainView, defaultSelected)
 
-	//set theme
+	// set theme
 	if strings.EqualFold(defaultTheme, "light") {
 		a.Settings().SetTheme(theme.LightTheme())
 	} else if strings.EqualFold(defaultTheme, "dark") {
@@ -110,7 +108,7 @@ func main() {
 	}
 
 	if deskCanvas, ok := w.Canvas().(desktop.Canvas); ok {
-		deskCanvas.SetOnKeyDown(deskdown) //for monitoring navigation of the list in inquire mode
+		deskCanvas.SetOnKeyDown(deskdown) // for monitoring navigation of the list in inquire mode
 		deskCanvas.SetOnKeyUp(deskup)
 	} else {
 		panic("mobile not yet supported")
@@ -126,13 +124,13 @@ func main() {
 				panic(err)
 			}
 			local_item_file := conf["configuration"].(map[string]interface{})["local item file"].(string)
-			err = ioutil.WriteFile(local_item_file, file2, 0644)
+			err = os.WriteFile(local_item_file, file2, 0644)
 			if err != nil {
 				panic(err)
 			}
 		}
 	})
-	//desktop shortcuts
+	// desktop shortcuts
 	setupDesktopShortcuts(w)
 
 	lists.List.Select(0)

@@ -3,15 +3,16 @@ package main
 import (
 	"bytes"
 	"fmt"
+	"regexp"
+	"sort"
+	"strconv"
+	"time"
+
 	"fyne.io/fyne/v2"
 	"fyne.io/fyne/v2/data/binding"
 	"fyne.io/fyne/v2/dialog"
 	"fyne.io/fyne/v2/driver/desktop"
 	"fyne.io/fyne/v2/widget"
-	"regexp"
-	"sort"
-	"strconv"
-	"time"
 )
 
 func (i *Inquiry) Initialize() {
@@ -44,7 +45,7 @@ func (l *userList) Initialize() {
 	l.List = widget.NewListWithData(l.ShowData.data,
 		func() fyne.CanvasObject {
 			lb := widget.NewLabel("template")
-			lb.Wrapping = fyne.TextTruncate
+			lb.Truncation = fyne.TextTruncateEllipsis
 			return lb
 		},
 		func(i binding.DataItem, o fyne.CanvasObject) {
@@ -66,7 +67,7 @@ func newInquiryEntry() *inquiryEntry {
 	return entry
 }
 
-//inquiry specific key handlers
+// inquiry specific key handlers
 func (i *inquiryEntry) KeyDown(key *fyne.KeyEvent) {
 	switch key.Name {
 	case fyne.KeyReturn:
@@ -92,9 +93,13 @@ func (i *inquiryEntry) KeyDown(key *fyne.KeyEvent) {
 		inquiry.InquiryScrollStop = true
 		go inquiryScroll(*key, i.list_loc-1)
 	case fyne.KeyLeft: //for inquiry list
-		inquiry.InquiryTabs.SelectTabIndex(0)
+		inquiry.InquiryTabs.SelectIndex(0)
 	case fyne.KeyRight: //for inquiry detail
-		inquiry.InquiryTabs.SelectTabIndex(1)
+		inquiry.InquiryTabs.SelectIndex(1)
+	case fyne.KeyPageDown:
+		lists.List.ScrollToBottom()
+	case fyne.KeyPageUp:
+		lists.List.ScrollToTop()
 	case fyne.KeyEscape: //for inquiry escape focused
 		w.Close()
 	}
@@ -107,8 +112,8 @@ func (m *inquiryEntry) TypedShortcut(s fyne.Shortcut) {
 	} else if ok {
 		t := s.(*desktop.CustomShortcut)
 		fmt.Println("shortcut name:", s.ShortcutName(), s.(*desktop.CustomShortcut).KeyName, s.(*desktop.CustomShortcut).Modifier)
-		fmt.Println(desktop.SuperModifier)
-		if t.Modifier == desktop.SuperModifier {
+		fmt.Println(fyne.KeyModifierSuper)
+		if t.Modifier == fyne.KeyModifierSuper {
 			switch t.KeyName {
 			case fyne.KeyG:
 				superAdd(s)
@@ -138,8 +143,8 @@ func (e *inquiryEntry) KeyUp(key *fyne.KeyEvent) {
 	}
 }
 
-//these are global keyhandlers attatched to the desktop window
-//they work in conjunction with the inquiry specific key handlers
+// these are global keyhandlers attatched to the desktop window
+// they work in conjunction with the inquiry specific key handlers
 func deskdown(key *fyne.KeyEvent) {
 	if state.currentMenuItem == "Inquire" { //for inquiry
 		switch key.Name {
@@ -152,9 +157,13 @@ func deskdown(key *fyne.KeyEvent) {
 			inquiry.InquiryScrollStop = true
 			go inquiryScroll(*key, lists.SelectEntry.list_loc)
 		case fyne.KeyLeft: //for inquiry list
-			inquiry.InquiryTabs.SelectTabIndex(0)
+			inquiry.InquiryTabs.SelectIndex(0)
 		case fyne.KeyRight: //for inquiry detail
-			inquiry.InquiryTabs.SelectTabIndex(1)
+			inquiry.InquiryTabs.SelectIndex(1)
+		case fyne.KeyPageDown:
+			lists.List.ScrollToBottom()
+		case fyne.KeyPageUp:
+			lists.List.ScrollToTop()
 		case fyne.KeyEscape: //for inquiry escape (unfocused)
 			w.Close()
 		}
@@ -176,9 +185,9 @@ func deskup(key *fyne.KeyEvent) {
 	}
 }
 
-//custom scrolling behavior applied to inquiry list
+// custom scrolling behavior applied to inquiry list
 func inquiryScroll(key fyne.KeyEvent, loc int) {
-	time.Sleep(200 * time.Millisecond)
+	time.Sleep(500 * time.Millisecond)
 	for inquiry.InquiryScrollStop {
 		time.Sleep(50 * time.Millisecond)
 		switch key.Name {
@@ -223,7 +232,7 @@ func (l *userList) GenListFromMap(key string) []string {
 	return res
 }
 
-//generates list of list names in alphabetical order
+// generates list of list names in alphabetical order
 func (l *userList) GetOrderedListNames() []string {
 	keys := make([]string, len(l.Data))
 	i := 0
@@ -244,7 +253,7 @@ func (l *userList) ListExists(listname string) bool {
 	return false
 }
 
-//regex search, and create linkage to original list datastructure
+// regex search, and create linkage to original list datastructure
 func (l *userList) RegexSearch(input string) {
 	rep := regexp.MustCompile("(?im)^.*" + input + `.*$`)
 	res := rep.FindAllString(inquiry.FilterList, -1)
@@ -282,7 +291,7 @@ func (l *userList) RegexSearch(input string) {
 	l.ShowData.strlist = tmp
 	l.SelectEntry.list_loc = 0
 	l.ShowData.data.Reload()
-	l.List.Select(0) //??why doesnt this call onselected??
+	l.List.Select(0) // ??why doesnt this call onselected??
 	inquiryIndexAndExpand(0)
 }
 
@@ -306,7 +315,7 @@ func (l *userList) RemoveElementByName(name string) bool {
 	return false
 }
 
-//inquiry list item selection behavior
+// inquiry list item selection behavior
 func inquiryIndexAndExpand(index int) {
 	if index < 0 {
 		index = 0
@@ -325,4 +334,6 @@ func inquiryIndexAndExpand(index int) {
 	inquiry.ExpandL1.SetText("Name: \n" + item.Name)
 	inquiry.ExpandL2.SetText("Rating: \n" + strconv.Itoa(item.Rating))
 	inquiry.ExpandL3.SetText("Tags: \n" + item.Tags)
+	// reset focus since we favor keyboard navigation of the list
+	w.Canvas().Focus(lists.SelectEntry)
 }

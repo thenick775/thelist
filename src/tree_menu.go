@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+
 	"fyne.io/fyne/v2"
 	"fyne.io/fyne/v2/dialog"
 	"fyne.io/fyne/v2/widget"
@@ -16,22 +17,22 @@ func menuTree(w fyne.Window, view *fyne.Container, defaultSelected string) *widg
 		"Configuration": {"Defaults"},
 	}
 
-	pagemap := map[string]MenuPageLink{ //for tree list page navigation/generation
-		"Inquire":     MenuPageLink{View: genInquire},
-		"Add":         MenuPageLink{View: genAddForm},
-		"Remove":      MenuPageLink{View: genRemove},
-		"Edit":        MenuPageLink{View: genEdit},
-		"Defaults":    MenuPageLink{View: genConfEdit},
-		"Switch List": MenuPageLink{View: genSwitchList},
-		"Add List":    MenuPageLink{View: genAddList},
-		"Edit List":   MenuPageLink{View: genEditList},
-		"Delete List": MenuPageLink{View: genDeleteList},
-		"Word Cloud":  MenuPageLink{View: genWordCloud},
-		"Statistics":  MenuPageLink{View: genStatistics},
+	pagemap := map[string]MenuPageLink{ // for tree list page navigation/generation
+		"Inquire":     {View: genInquire},
+		"Add":         {View: genAddForm},
+		"Remove":      {View: genRemove},
+		"Edit":        {View: genEdit},
+		"Defaults":    {View: genConfEdit},
+		"Switch List": {View: genSwitchList},
+		"Add List":    {View: genAddList},
+		"Edit List":   {View: genEditList},
+		"Delete List": {View: genDeleteList},
+		"Word Cloud":  {View: genWordCloud},
+		"Statistics":  {View: genStatistics},
 	}
 
 	tree := widget.NewTreeWithStrings(listtree)
-	tree.OnSelected = func(uid string) { //here we switch between views
+	tree.OnSelected = func(uid string) { // here we switch between views
 		if page, ok := pagemap[uid]; ok {
 			state.currentMenuItem = uid
 			view.Objects = []fyne.CanvasObject{page.View(w)}
@@ -42,7 +43,7 @@ func menuTree(w fyne.Window, view *fyne.Container, defaultSelected string) *widg
 		}
 	}
 
-	//get branch to open based on defaultSelected
+	// get branch to open based on defaultSelected
 	broken, defaultBranch := false, ""
 	for key, val := range listtree {
 		if key != "" {
@@ -71,7 +72,7 @@ func menuTree(w fyne.Window, view *fyne.Container, defaultSelected string) *widg
 }
 
 func isMenuTreeLeaf(node_name string) bool {
-	branchUIDs := tree.ChildUIDs("") //level 1, internal branches
+	branchUIDs := tree.ChildUIDs("") // level 1, internal branches
 	for _, branch := range branchUIDs {
 		for _, leaf := range tree.ChildUIDs(branch) {
 			if node_name == leaf {

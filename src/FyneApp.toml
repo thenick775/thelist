@@ -1,0 +1,6 @@
+[Details]
+  Icon = "../images/TheList-large.png"
+  Name = "TheList"
+  ID = "com.vancise.thelist"
+  Version = "1.0.1"
+  Build = 8

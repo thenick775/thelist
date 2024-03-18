@@ -1,19 +1,20 @@
 package main
 
 import (
+	"strconv"
+
 	"fyne.io/fyne/v2"
 	"fyne.io/fyne/v2/driver/desktop"
-	"strconv"
 )
 
-//menu shortcuts
+// menu shortcuts
 func shortcutFocused(s fyne.Shortcut, w fyne.Window) {
 	if focused, ok := w.Canvas().Focused().(fyne.Shortcutable); ok {
 		focused.TypedShortcut(s)
 	}
 }
 
-//shared shortcuts below
+// shared shortcuts below
 func superFind(shortcut fyne.Shortcut) {
 	if state.currentMenuItem == "Inquire" {
 		w.Canvas().Focus(lists.SelectEntry) //maybe need unfocus somewhere?
@@ -99,20 +100,20 @@ func superClearInquiry(shortcut fyne.Shortcut) {
 }
 
 func setupDesktopShortcuts(w fyne.Window) {
-	ctrlFind := desktop.CustomShortcut{KeyName: fyne.KeyF, Modifier: desktop.SuperModifier}
+	ctrlFind := desktop.CustomShortcut{KeyName: fyne.KeyF, Modifier: fyne.KeyModifierSuper}
 	w.Canvas().AddShortcut(&ctrlFind, superFind)
-	ctrlAdd := desktop.CustomShortcut{KeyName: fyne.KeyG, Modifier: desktop.SuperModifier}
+	ctrlAdd := desktop.CustomShortcut{KeyName: fyne.KeyG, Modifier: fyne.KeyModifierSuper}
 	w.Canvas().AddShortcut(&ctrlAdd, superAdd)
-	ctrlEdit := desktop.CustomShortcut{KeyName: fyne.KeyE, Modifier: desktop.SuperModifier}
+	ctrlEdit := desktop.CustomShortcut{KeyName: fyne.KeyE, Modifier: fyne.KeyModifierSuper}
 	w.Canvas().AddShortcut(&ctrlEdit, superEdit)
-	ctrlInquire := desktop.CustomShortcut{KeyName: fyne.KeyI, Modifier: desktop.SuperModifier}
+	ctrlInquire := desktop.CustomShortcut{KeyName: fyne.KeyI, Modifier: fyne.KeyModifierSuper}
 	w.Canvas().AddShortcut(&ctrlInquire, superInquire)
-	ctrlSwitchList := desktop.CustomShortcut{KeyName: fyne.KeyR, Modifier: desktop.SuperModifier}
+	ctrlSwitchList := desktop.CustomShortcut{KeyName: fyne.KeyR, Modifier: fyne.KeyModifierSuper}
 	w.Canvas().AddShortcut(&ctrlSwitchList, superSwitchList)
-	ctrlSwitchListUp := desktop.CustomShortcut{KeyName: fyne.KeyUp, Modifier: desktop.SuperModifier}
+	ctrlSwitchListUp := desktop.CustomShortcut{KeyName: fyne.KeyUp, Modifier: fyne.KeyModifierSuper}
 	w.Canvas().AddShortcut(&ctrlSwitchListUp, superSwitchListUp)
-	ctrlSwitchListDown := desktop.CustomShortcut{KeyName: fyne.KeyDown, Modifier: desktop.SuperModifier}
+	ctrlSwitchListDown := desktop.CustomShortcut{KeyName: fyne.KeyDown, Modifier: fyne.KeyModifierSuper}
 	w.Canvas().AddShortcut(&ctrlSwitchListDown, superSwitchListDown)
-	ctrlClearInquiry := desktop.CustomShortcut{KeyName: fyne.KeyB, Modifier: desktop.SuperModifier}
+	ctrlClearInquiry := desktop.CustomShortcut{KeyName: fyne.KeyB, Modifier: fyne.KeyModifierSuper}
 	w.Canvas().AddShortcut(&ctrlClearInquiry, superClearInquiry)
 }

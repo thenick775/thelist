@@ -12,7 +12,7 @@ import (
 	"os"
 )
 
-//system menu setup, this is the "external" system menu
+// system menu setup, this is the "external" system menu
 func setupSystemMenu(w fyne.Window, a fyne.App) {
 	newItem := fyne.NewMenuItem("New", nil)
 	newItem.ChildMenu = fyne.NewMenu("",

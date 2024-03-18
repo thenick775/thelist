@@ -3,6 +3,12 @@ package main
 import (
 	"encoding/json"
 	"fmt"
+	"image"
+	"os"
+	"sort"
+	"strconv"
+	"strings"
+
 	"fyne.io/fyne/v2"
 	"fyne.io/fyne/v2/canvas"
 	"fyne.io/fyne/v2/container"
@@ -11,12 +17,6 @@ import (
 	"fyne.io/fyne/v2/dialog"
 	"fyne.io/fyne/v2/theme"
 	"fyne.io/fyne/v2/widget"
-	"image"
-	"io/ioutil"
-	"os"
-	"sort"
-	"strconv"
-	"strings"
 )
 
 func genAddForm(_ fyne.Window) fyne.CanvasObject {
@@ -269,7 +269,7 @@ func genConfEdit(w fyne.Window) fyne.CanvasObject {
 						//determine whether to load file
 						if _, err := os.Stat(localItemFile.Text); err == nil {
 							// file exists
-							byteValue, err := ioutil.ReadFile(localItemFile.Text)
+							byteValue, err := os.ReadFile(localItemFile.Text)
 							if err != nil {
 								dialog.ShowError(fmt.Errorf("Failed to read new listing file"), w)
 							} else {
@@ -467,7 +467,7 @@ func genWordCloud(_ fyne.Window) fyne.CanvasObject {
 	dataBreakdown := widget.NewListWithData(breakdownShowList,
 		func() fyne.CanvasObject {
 			lb := widget.NewLabel("template")
-			lb.Wrapping = fyne.TextTruncate
+			lb.Truncation = fyne.TextTruncateEllipsis
 			return lb
 		},
 		func(i binding.DataItem, o fyne.CanvasObject) {
