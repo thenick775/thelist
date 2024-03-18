@@ -69,7 +69,6 @@ func newInquiryEntry() *inquiryEntry {
 
 // inquiry specific key handlers
 func (i *inquiryEntry) KeyDown(key *fyne.KeyEvent) {
-	fmt.Println("vancise in inquiry keydown")
 	switch key.Name {
 	case fyne.KeyReturn:
 		if i.Text == "" && !state.alphasort.enabled {
@@ -147,7 +146,6 @@ func (e *inquiryEntry) KeyUp(key *fyne.KeyEvent) {
 // these are global keyhandlers attatched to the desktop window
 // they work in conjunction with the inquiry specific key handlers
 func deskdown(key *fyne.KeyEvent) {
-	fmt.Println("vancise in deskdown")
 	if state.currentMenuItem == "Inquire" { //for inquiry
 		switch key.Name {
 		case fyne.KeyDown: //for inquiry list navigation
@@ -319,7 +317,6 @@ func (l *userList) RemoveElementByName(name string) bool {
 
 // inquiry list item selection behavior
 func inquiryIndexAndExpand(index int) {
-	fmt.Println("vancise in inquiryIndexAndExpand:", index)
 	if index < 0 {
 		index = 0
 	} else if index > lists.List.Length()-1 {
